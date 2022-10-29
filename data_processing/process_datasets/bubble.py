@@ -31,7 +31,6 @@ def get_bubbles(df: DataFrame, geo_ip_df: DataFrame) -> DataFrame:
     geo_enriched_data = geo_enriched_data_src.join(
         geo_enriched_data_tgt, on="ID", how="inner"
     )
-    # now we want to essentially split the rows into two rows, one for the source and one for the target
     return geo_enriched_data.select(
         "ID",
         "EventTime",
