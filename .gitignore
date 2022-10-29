@@ -1,0 +1,10 @@
+# pycharm
+.idea
+# data source files
+data_processing/src_data/*
+
+# spark output
+output/*
+
+# pycache
+*.pyc

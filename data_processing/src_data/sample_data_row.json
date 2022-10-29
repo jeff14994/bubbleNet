@@ -1,0 +1,52 @@
+{
+  "DetectTime": "2019-03-11T00:04:43.312146+02:00",
+  "Node": [
+    {
+      "AggrWin": "00:05:00",
+      "SW": [
+        "Dionaea"
+      ],
+      "Type": [
+        "Connection",
+        "Protocol",
+        "Honeypot"
+      ],
+      "Name": "cz.cesnet.hugo.haas_dionaea"
+    }
+  ],
+  "Target": [
+    {
+      "Anonymised": true,
+      "Port": [
+        445
+      ],
+      "IP4": [
+        "192.0.0.0"
+      ],
+      "Proto": [
+        "tcp"
+      ]
+    }
+  ],
+  "ConnCount": 2,
+  "Format": "IDEA0",
+  "Category": [
+    "Recon.Scanning"
+  ],
+  "Source": [
+    {
+      "Port": [
+        3508
+      ],
+      "IP4": [
+        "22.198.228.92"
+      ],
+      "Proto": [
+        "tcp"
+      ]
+    }
+  ],
+  "WinStartTime": "2019-03-11T00:00:01.222836+02:00",
+  "WinEndTime": "2019-03-11T00:05:01.222721+02:00",
+  "ID": "f62537c2-77b8-49c7-a0a2-24c4b81b20f8"
+}
