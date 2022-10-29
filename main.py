@@ -6,7 +6,7 @@ from pandas import DataFrame
 from pyspark.sql import DataFrame
 import argparse
 
-from data_processing.utils.util import get_spark_session, write_to_single_csv
+from data_processing.utils.util import get_spark_session, write_to_single_csv, pre_process_dataset
 
 spark = get_spark_session()
 data_dir = "data_processing/src_data"
@@ -24,6 +24,7 @@ def load_datasets() -> tuple[DataFrame, DataFrame, DataFrame]:
     )
 
     dataset = spark.read.json(f"{data_dir}/dataset.idea/dataset.idea")
+    dataset = pre_process_dataset(dataset)
     return geo_ip, passive_dns, dataset
 
 
