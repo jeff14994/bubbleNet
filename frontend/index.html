@@ -3,28 +3,63 @@
     <head>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" />
         <script src="https://d3js.org/d3.v7.min.js"></script>
-        <script src="component/bubble.js"></script>
+        <script src="js/components/bubble.js"></script>
+        <script src="js/index.js"></script>
         <style>
-            .myContainer {
-                margin:auto;
-                width:1300px;
-            }
-            .data-viz {
-                margin-top: 50px;
+            .title {
+                margin: 4px;
                 display: flex;
                 justify-content: center;
             }
-            #demo {
-                width: 1200px;
-                height: 650px;
+            .main-container {
+                display: flex;
+                flex-direction: row;
+            }
+            .top-bar {
+                display: flex;
+                flex-direction: row;
+            }
+            .data-viz {
+                display: flex;
+            }
+            #map {
+                width: 1000px;
+                height: 550px;
+            }
+            #heatmap {
+                width: 300px;
+                height: 100%;
+            }
+            #time-alert {
+                width: 500px;
+                height: 100px;
+            }
+            #attribute {
+                width: 500px;
+                height: 100px;
+            }
+            #table {
+                width: 1000px;
+                height: 100%;
             }
         </style>
     </head>
     <body>
-        <div class="myContainer">
-            <div class="data-viz">
-                <svg id="demo"></svg>
-            </div> 
+        <div class="title">
+            <h3>BubbleNet: A Cyber Security Dashboard for Visualizing Patterns</h1>
+        </div>
+        <div class="main-container">
+            <div class="data-viz" id="heatmap"></div>
+            <div class="content">
+                <div class="top-bar">
+                    <div class="data-viz" id="time-alert"></div>
+                    <div class="data-viz" id="attribute"></div>
+                </div>
+                <div class="data-viz">
+                    <svg id="map"></svg>
+                </div>
+                <div class="data-viz" id="table"></div>
+            </div>
         </div>
     </body>
 </html>

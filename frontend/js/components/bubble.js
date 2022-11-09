@@ -5,46 +5,6 @@
  *  ASUID: 1222290303
  */
 
-document.addEventListener('DOMContentLoaded', function () {
-    init();
-});
-
-/**
- *  Init for background map.
- */
-const init = () => {
-
-    const svg = d3.select('#demo');
-    const width = 1200;
-    const height = 650;
-
-    // Initialize background map (source: https://d3-graph-gallery.com/graph/backgroundmap_basic.html)
-    const projection = d3.geoEquirectangular()
-                        .scale(width / 2 / Math.PI)
-                        .rotate([0, 0])
-                        .center([0, 0])
-                        .translate([width / 2, height / 2])
-
-    d3.json('https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson').then( function(data) {
-        const bgMap = svg
-            .selectAll('path')
-            .data(data.features)
-            .join('path')
-                .attr('fill', '#D3D3D3')
-                .attr('d', d3.geoPath().projection(projection))
-                .style('stroke', '#FFF');
-        bgMap.lower();
-    })
-
-    // TODO: apply real data in here.
-    const data = [
-        {numberOfAlerts: 340, date: '2019-03-15T20:29:16Z', country: 'United States', targetLatitude: 42.2794, targetLongitude: -83.7828, source:[[119.6442, 29.1068],[-79.3633, 43.652]]},
-        {numberOfAlerts: 440, date: '2019-03-16T20:29:16Z', country: 'China', region: 'Asia', targetLatitude: 29.1068, targetLongitude: 119.6442, source:[[-83.7828, 42.2794],[-79.3633, 43.652]]},
-        {numberOfAlerts: 140, date: '2019-03-17T20:29:16Z', country: 'Canada', region: 'NA', targetLatitude: 43.652, targetLongitude: -79.3633, source:[[-83.7828, 42.2794],[119.6442, 29.1068]]},
-    ]
-    bubble(data, svg, projection);
-}
-
 /**
  *  Bubble component.
  */
@@ -134,8 +94,8 @@ const bubble = (data, svg, projection) => {
     // svg.selectAll('text')
     //     .data(data).enter()
     //     .append('text')
-    //     .attr('x', d => d.targetLongitude)
-    //     .attr('y', d => d.targetLatitude + 5)
+    //     .attr('x', d => projection([d.targetLongitude, d.targetLatitude])[0])
+    //     .attr('y', d => projection([d.targetLongitude, d.targetLatitude])[1] + 5)
     //     .text(d => d.country)
     //     .attr('text-anchor','middle')
     //     .style('font-family', 'arial')
