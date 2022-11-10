@@ -6,7 +6,22 @@
  */
 
 /**
- *  Bubble component.
+ *  Bubble component.  
+ *  Data format:  
+ *  {  
+ *      numberOfAlerts: number,   
+ *      date: Date,   
+ *      sourceCountry: string,   
+ *      sourceRegion: string,   
+ *      sourceLatitude: number,   
+ *      sourceLongitude: number,  
+ *      target: [  
+ *          targetCountry: string,  
+ *          targetRegion: string,  
+ *          targetLatitude: number,  
+ *          targetLongitude: number,  
+ *      ]  
+ *  }  
  */
 const bubble = (data, svg, projection) => {
     // tooltip
@@ -16,21 +31,28 @@ const bubble = (data, svg, projection) => {
         .style('opacity', 0);
     
     const color = d3.scaleOrdinal()
-                        .domain(['level-1', 'level-2', 'level-3', 'level-4', 'level-5'])
-                        .range(['#339900', '#99CC33', '#FFCC00', '#FF9966', '#CC3300']);
+                        .domain(['level-1', 'level-2', 'level-3', 'level-4', 'level-5', 'level-6'])
+                        .range(['#48B0D4', '#92DCEB', '#FA011E', '#FEA85C', '#FFDF8C', '#FFFFBC']);
+
+    const size = d3.scaleOrdinal()
+                        .domain(['level-1', 'level-2', 'level-3', 'level-4', 'level-5', 'level-6'])
+                        .range([10, 20, 30, 40, 50, 60]);
+
+    const getCountryNames = new Intl.DisplayNames(['en'], {type: 'region'});
 
     const level = (value) => {
-        switch (Math.trunc(value/100)) {
-            case 1:
-                return 'level-2';
-            case 2:
-                return 'level-3';
-            case 3:
-                return 'level-4';
-            case 4:
-                return 'level-5';
-            default:
-                return 'level-1';
+        if (value <= 1) {
+            return 'level-1';
+        } else if (value <= 9) {
+            return 'level-2';
+        } else if (value <= 80) {
+            return 'level-3';
+        } else if (value <= 700) {
+            return 'level-4';
+        } else if (value <= 6000) {
+            return 'level-5';
+        } else {
+            return 'level-6';
         }
     }
 
@@ -38,10 +60,10 @@ const bubble = (data, svg, projection) => {
         .data(data).enter()
         .append('ellipse')
         .classed('bubble', true)
-        .attr('cx', d => projection([d.targetLongitude, d.targetLatitude])[0])
-        .attr('cy', d => projection([d.targetLongitude, d.targetLatitude])[1])
-        .attr('rx', d => d.numberOfAlerts/Math.PI/10)
-        .attr('ry', d => d.numberOfAlerts/Math.PI/10)
+        .attr('cx', d => projection([d.sourceLongitude, d.sourceLatitude])[0])
+        .attr('cy', d => projection([d.sourceLongitude, d.sourceLatitude])[1])
+        .attr('rx', d => size(level(d.numberOfAlerts)))
+        .attr('ry', d => size(level(d.numberOfAlerts)) / 1.5)
         .attr('stroke-width', '1px')
         .attr('stroke', '#000000')
         .attr('fill', d => color(level(d.numberOfAlerts))) // depends on numberOfAlerts
@@ -49,9 +71,9 @@ const bubble = (data, svg, projection) => {
             div.transition()
                 .duration(200)
                 .style('opacity', 1);
-            div.html(`Date: ${new Date(i.date).toLocaleString('en-US')} <br/>
-                      Period: 00:00 - 23:59 <br/>
-                      ${i.country}: <span style="color:red;">${i.numberOfAlerts} alerts</span>`)
+            div.html(`${new Date(i.date).toDateString('en-US')} <br/>
+                      00:00 - 23:59 <br/>
+                      ${getCountryNames.of(i.sourceCountry)}: <span style="color:red;">${i.numberOfAlerts} alerts</span>`)
                 .attr('width', 120)
                 .attr('height', 80)
                 .style('display', 'block')
@@ -75,14 +97,14 @@ const bubble = (data, svg, projection) => {
         .on('click', (d,i) => {
             if (d3.select(d.currentTarget).classed('selected')) {
                 d3.select(d.currentTarget).classed('selected', false);
-                d3.selectAll('.line').remove(); 
+                d3.selectAll('.line').remove();
             } else {
                 d3.select(d.currentTarget).classed('selected', true);
                 svg.selectAll('.line')
-                    .data(i.source).enter()
+                    .data(i.target).enter()
                     .append('path')
                     .classed('line', true)
-                    .attr('d', d => d3.line()([[projection([i.targetLongitude, i.targetLatitude])[0], projection([i.targetLongitude, i.targetLatitude])[1]], [projection(d)[0], projection(d)[1]]]))
+                    .attr('d', d => d3.line()([[projection([i.sourceLongitude, i.sourceLatitude])[0], projection([i.sourceLongitude, i.sourceLatitude])[1]], [projection(d)[0], projection(d)[1]]]))
                     .attr('stroke', '#000000')
                     .attr('stroke-width', '1px')
                     .attr('fill', 'none');
@@ -91,15 +113,15 @@ const bubble = (data, svg, projection) => {
         });
     
     // Text in the bubble. We need to discuss if we want to keep country name in the middle of the bubble.
-    // svg.selectAll('text')
-    //     .data(data).enter()
-    //     .append('text')
-    //     .attr('x', d => projection([d.targetLongitude, d.targetLatitude])[0])
-    //     .attr('y', d => projection([d.targetLongitude, d.targetLatitude])[1] + 5)
-    //     .text(d => d.country)
-    //     .attr('text-anchor','middle')
-    //     .style('font-family', 'arial')
-    //     .style('font-size', '12px');
+    svg.selectAll('text')
+        .data(data).enter()
+        .append('text')
+        .attr('x', d => projection([d.sourceLongitude, d.sourceLatitude])[0])
+        .attr('y', d => projection([d.sourceLongitude, d.sourceLatitude])[1] + 5)
+        .text(d => d.sourceCountry)
+        .attr('text-anchor','middle')
+        .style('font-family', 'arial')
+        .style('font-size', '12px');
 
     // This part is for arrow-like link. Keep this for future usage.
     // svg.append('defs')

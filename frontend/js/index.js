@@ -1,9 +1,10 @@
 /**
  *  Main JS file to include all components
  */
-
+var data;
 
 document.addEventListener('DOMContentLoaded', function () {
+    // TODO: add spinner here to await loading csv
     init();
 });
 
@@ -11,14 +12,15 @@ document.addEventListener('DOMContentLoaded', function () {
 const init = () => {
     // Implementation for map view
     const svg = d3.select('#map');
-    const width = 1000;
-    const height = 550;
+    const width = d3.select('#map').style('width').replace('px','');
+    const height = d3.select('#map').style('height').replace('px','');
 
     // Initialize background map (source: https://d3-graph-gallery.com/graph/backgroundmap_basic.html)
     const projection = d3.geoEquirectangular()
                         .scale(width / 2 / Math.PI)
                         .rotate([0, 0])
-                        .center([0, 0]);
+                        .center([0, 0])
+                        .translate([width / 2, height / 2]);
                         
 
     d3.json('https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson').then( function(data) {
