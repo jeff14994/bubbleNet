@@ -58,6 +58,12 @@ def parse_args():
         default=None,
         help='The maximum date to include in the dataset, if None, then the entire dataset is used'
     )
+    parser.add_argument(
+        '--order',
+        action='store_true',
+        help='Whether to order the dataset by date'
+
+    )
     return parser.parse_args()
 
 
@@ -79,6 +85,7 @@ def main():
     else:
         datasets = [args.dataset]
 
+    order = True if args.order else False
     for ds in datasets:
         match ds:
             case "alert_timer":
@@ -86,6 +93,7 @@ def main():
                 from data_processing.process_datasets.alert_timer import get_alert_timer
 
                 df = get_alert_timer(dataset, geo_ip)
+                df = df.orderBy("Date", "Time") if order else df
                 write_to_single_csv(df, f"{args.output_dir}/alert_timer")
             case "bullet_chart":
                 print("Processing bullet_chart")
@@ -94,24 +102,28 @@ def main():
                 )
 
                 df = get_bullet_chart(dataset, geo_ip)
+                df = df.orderBy("ID") if order else df
                 write_to_single_csv(df, f"{args.output_dir}/bullet_chart")
             case "table":
                 print("Processing table")
                 from data_processing.process_datasets.table import get_table
 
                 df = get_table(dataset, geo_ip)
+                df = df.orderBy("ID") if order else df
                 write_to_single_csv(df, f"{args.output_dir}/table")
             case "bubble":
                 print("Processing bubble")
                 from data_processing.process_datasets.bubble import get_bubbles
 
                 df = get_bubbles(dataset, geo_ip)
+                df = df.orderBy("ID") if order else df
                 write_to_single_csv(df, f"{args.output_dir}/bubble")
             case "heatmap":
                 print("Processing heatmap")
                 from data_processing.process_datasets.heatmap import get_heatmap
 
                 df = get_heatmap(dataset)
+                df = df.orderBy("Date", "Time") if order else df
                 write_to_single_csv(df, f"{args.output_dir}/heatmap")
 
 
