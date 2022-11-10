@@ -61,7 +61,7 @@ def parse_args():
     parser.add_argument(
         '--order',
         action='store_true',
-        help='Whether to order the dataset by date'
+        help='Whether to order the dataset'
 
     )
     return parser.parse_args()
