@@ -1,3 +1,4 @@
+import datetime
 import os
 import shutil
 from typing import List, Tuple
@@ -44,6 +45,18 @@ def parse_args():
         type=int,
         default=None,
         help="Number of rows to deterministically sample from the dataset, if None, then the entire dataset is used",
+    )
+    parser.add_argument(
+        '--min-date',
+        type=datetime.datetime.fromisoformat,
+        default=None,
+        help='The minimum date to include in the dataset, if None, then the entire dataset is used'
+    )
+    parser.add_argument(
+        '--max-date',
+        type=datetime.datetime.fromisoformat,
+        default=None,
+        help='The maximum date to include in the dataset, if None, then the entire dataset is used'
     )
     return parser.parse_args()
 

@@ -1,3 +1,5 @@
+import datetime
+
 from pyspark.sql import DataFrame, SparkSession
 import pyspark.sql.functions as F
 
@@ -58,7 +60,7 @@ def get_target_data(
     return enriched_df.select(*df.columns, *added_cols)
 
 
-def pre_process_dataset(df: DataFrame) -> DataFrame:
+def pre_process_dataset(df: DataFrame, min_date: datetime.datetime = None, max_date: datetime.datetime = None) -> DataFrame:
     """
     This function takes the raw dataset and returns a processed dataset
     """
@@ -68,6 +70,10 @@ def pre_process_dataset(df: DataFrame) -> DataFrame:
         .filter(F.size(F.col("Target")) == 1)
         .filter(F.size(F.col("Node")) == 1)
     )
+    if min_date:
+        df = df.filter(F.col("EventTime") >= min_date)
+    if max_date:
+        df = df.filter(F.col("EventTime") <= max_date)
     # Convert the DetectTime column to a timestamp
     df = df.withColumn("EventTime", F.to_timestamp("EventTime")).filter(
         F.col("EventTime").isNotNull()
