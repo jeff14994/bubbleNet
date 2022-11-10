@@ -55,4 +55,5 @@ def get_bubbles(df: DataFrame, geo_ip_df: DataFrame) -> DataFrame:
         "TargetRegion",
         "Category",
         "ConnCount",
+        "ProtocolType",
     )
