@@ -6,56 +6,93 @@
  */
 
 /**
- *  Function to filter data with given time period.
+ *  Function to preProcess the data_with_detail before rendering.
+ *  Data Format:
+ *  {
+ *      US: {
+ *              latitude: number,
+ *              longitude: number,
+ *              date: {
+ *                      2019-03-10: {
+ *                                      numberOfAlerts: number,
+ *                                      detail: [
+ *                                                  {ID:string, Category: string ,ConnCount: number, ProtocolType: string},
+ *                                      ],
+ *                                      target: [string],
+ *       0-index array with 24 items -> time: [
+ *                                                  {       
+ *                                                          numberOfAlerts: number,
+ *                                                          target: [string],
+ *                                                          detail: [
+ *                                                                      {ID:string, Category: string ,ConnCount: number, ProtocolType: string},
+ *                                                          ],
+ *                                                  },
+ *                                                  ......
+ *                                                 {...},
+ *                                      ],
+ *                      },
+ *                      ......
+ *                      2019-03-16: {...},
+ *             },
+ *     },
+ *  }
  */
-const dateFilter = (data, startTime, endTime) => {
+const preProcess = (rawData) => {
     let regionTable = {};
-    data.forEach(value => {
-        const sourceTime = new Date(value['EventTime']);
-        const start = new Date(startTime);
-        const end = new Date(endTime);
-        if (sourceTime >= start && sourceTime <= end) {
-            if (regionTable.hasOwnProperty(value['SourceCountry'])){
-                const dateKey = new Date(value['EventTime']).toDateString('en-US');
-                if (regionTable[value['SourceCountry']].date.hasOwnProperty(dateKey)){
-                    regionTable[value['SourceCountry']].date[dateKey].numberOfAlerts += 1;
-                    if (!regionTable[value['SourceCountry']].date[dateKey].target.includes([value['TargetLatitude'], value['TargetLongitude']])){
-                        regionTable[value['SourceCountry']].date[dateKey].target.push([value['TargetLatitude'], value['TargetLongitude']]);
-                    }
-                } else {
-                    regionTable[value['SourceCountry']].date[dateKey] = {
-                        numberOfAlerts: 1,
-                        target: [[value['TargetLatitude'], value['TargetLongitude']]]
-                    }
-                }
-            } else {
-                const dateKey = new Date(value['EventTime']).toDateString('en-US');
-                regionTable[value['SourceCountry']] = {
-                    sourceLatitude: value['SourceLatitude'], 
-                    sourceLongitude: value['SourceLongitude'],
-                    date: {}
-                };
-                regionTable[value['SourceCountry']].date[dateKey] = {numberOfAlerts: 1, target: [[value['TargetLatitude'], value['TargetLongitude']]]};
-            }
+    rawData.forEach(record => {
+        if (!regionTable.hasOwnProperty(record['SourceCountry'])){
+            const dateRange = ['Sun Mar 10 2019', 'Mon Mar 11 2019', 'Tue Mar 12 2019', 'Wed Mar 13 2019', 'Thu Mar 14 2019', 'Fri Mar 15 2019', 'Sat Mar 16 2019'];
+            const dateObject = {};
+            dateRange.map(v => {
+                dateObject[v] = dateObjectGenerator();
+            });
+            regionTable[record['SourceCountry']] = {
+                sourceLatitude: record['SourceLatitude'], 
+                sourceLongitude: record['SourceLongitude'],
+                date: dateObject,
+            };
         }
-    });
+        const dateKey = new Date(record['EventTime']).toDateString('en-US');
+        const timeKey = new Date(record['EventTime']).getHours();
+        regionTable[record['SourceCountry']].date[dateKey].numberOfAlerts += 1;
+        regionTable[record['SourceCountry']].date[dateKey].detail.push({ID: record['ID'], Category: record['Category'], ConnCount: record['ConnCount'], ProtocolType: record['ProtocolType']});
+        regionTable[record['SourceCountry']].date[dateKey].time[timeKey].numberOfAlerts += 1;
+        regionTable[record['SourceCountry']].date[dateKey].time[timeKey].detail.push({ID: record['ID'], Category: record['Category'], ConnCount: record['ConnCount'], ProtocolType: record['ProtocolType']});
+        if (!regionTable[record['SourceCountry']].date[dateKey].target.includes(`${record['TargetLatitude']},${record['TargetLongitude']}`)) {
+            regionTable[record['SourceCountry']].date[dateKey].target.push(`${record['TargetLatitude']},${record['TargetLongitude']}`);
+        }
+        if (!regionTable[record['SourceCountry']].date[dateKey].time[timeKey].target.includes(`${record['TargetLatitude']},${record['TargetLongitude']}`)) {
+            regionTable[record['SourceCountry']].date[dateKey].time[timeKey].target.push(`${record['TargetLatitude']},${record['TargetLongitude']}`);
+        }
+    });    
     return regionTable;
 }
 
-const dayFilter = (regionTable, date) => {
-    const result = []
-    const targetDate = new Date(date).toDateString('en-US');
-    Object.entries(regionTable).forEach(([key,value]) => {
-        if (value.date.hasOwnProperty(targetDate)){
-            result.push({
-                numberOfAlerts: value.date[targetDate].numberOfAlerts,
-                date: targetDate,
-                sourceCountry: key,
-                sourceLatitude: value.sourceLatitude,   
-                sourceLongitude: value.sourceLongitude,
-                target: value.date[targetDate].target,
-            });
-        }
-    });
+/**
+ *  Helper function for date object.
+ */
+const dateObjectGenerator = () => {
+    const timeObject = timeObjectGenerator();
+    return {
+        numberOfAlerts: 0,
+        detail: [],
+        target: [],
+        time: timeObject,
+    };
+}
+
+/**
+ *  Helper function for time object.
+ */
+const timeObjectGenerator = () => {
+    const result = [];
+    const iterator = [...Array(24).keys()];
+    iterator.map(_ => {
+        result.push({
+            numberOfAlerts: 0, 
+            detail: [], 
+            target: []
+        });
+    })
     return result;
 }

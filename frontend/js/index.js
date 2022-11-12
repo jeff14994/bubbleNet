@@ -4,8 +4,12 @@
 var data;
 
 document.addEventListener('DOMContentLoaded', function () {
-    // TODO: add spinner here to await loading csv
-    init();
+    showSpinner(true);
+    Promise.all([d3.csv('/data/data_with_detail.csv')]).then(function (values) {
+        init();
+        data = preProcess(values[0]);
+        showSpinner(false);
+    });
 });
 
 
@@ -33,4 +37,9 @@ const init = () => {
                 .style('stroke', '#FFF');
         bgMap.lower();
     });
+}
+
+const showSpinner = (flag) => {
+    const spinner = d3.select('#spinner');
+    spinner.style('visibility', flag ? 'visible' : 'hidden');
 }
