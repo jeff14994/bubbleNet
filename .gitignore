@@ -5,3 +5,5 @@
 formatted_data/*
 
 output/*
+
+frontend/data/*.csv
