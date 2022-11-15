@@ -27,7 +27,6 @@ const heatmap = (data, country)  => {
     var tooltip = d3.select("body").append("div")
                     .attr("class", "tooltip_heatmap")
                     .style("opacity", 0)
-                    // .style("position", "relative")
     // remove the chart before drawing a new one
     d3.select("#heatmap svg").remove();
     // append the svg object to the body of the page
@@ -50,7 +49,7 @@ const heatmap = (data, country)  => {
     var mouseover = function(d) {
         tooltip
             .transition()
-            .duration(200)
+            .duration(500)
             .style("opacity", 1)
         d3.select(this)
             .style("stroke", "black")
@@ -59,36 +58,48 @@ const heatmap = (data, country)  => {
     var mousemove = function(e, i) {
         tooltip
             .html("Number of attack: " + i.ConnCount)
+            .style("opacity", "1")
+            .style("position", "absolute")
             .style("left", (e.pageX) + "px")
             .style("top", (e.pageY) + "px")
+            // reuse the tooltip style from bubble.js and modify the border radius
+            .attr('width', 120)
+            .attr('height', 80)
+            .style('margin', '6px')
+            .style('align-items', 'center')
+            .style('font', '14px arial')
+            .style('color', '#FFFFFF')
+            .style('background','#000000')
+            .style('opacity', '0.8')
+            .style('border-radius', '6px')
     }
     var mouseleave = function(d) {
         tooltip
             .transition()
-            .duration(200)
+            .duration(500)
             .style("opacity", 0)
         d3.select(this)
             .style("stroke", "none")
             .style("opacity", 0.7)
     }
-// show the squares when hovering
-svg.selectAll()
-    .data(data)
-    .enter()
-    .append("rect")
-        .attr("x", function(d) { return x(d.date) })
-        .attr("y", function(d) { return y(d.time) })
-        .attr("rx", 4)
-        .attr("ry", 4)
-        .attr("width", x.bandwidth() )
-        .attr("height", y.bandwidth() )
-        .style("fill", function(d) { return color(d.ConnCount)} )
-        .style("stroke-width", 4)
-        .style("stroke", "none")
-        .style("opacity", 0.8)
-    .on("mouseover", mouseover)
-    .on("mousemove", mousemove)
-    .on("mouseleave", mouseleave)
+    // show the squares when hovering
+    svg.selectAll()
+            .data(data)
+            .enter()
+            .append("rect")
+                .attr("x", function(d) { return x(d.date) })
+                .attr("y", function(d) { return y(d.time) })
+                .attr("rx", 4)
+                .attr("ry", 4)
+                .attr("width", x.bandwidth() )
+                .attr("height", y.bandwidth() )
+                .style("fill", function(d) { return color(d.ConnCount)} )
+                .style("stroke-width", 4)
+                .style("stroke", "none")
+                .style("opacity", 0.8)
+            .on("mouseover", mouseover)
+            .on("mousemove", mousemove)
+            .on("mouseleave", mouseleave)
 }
 function dataPreProcess(data, country) {
     // get data and time
