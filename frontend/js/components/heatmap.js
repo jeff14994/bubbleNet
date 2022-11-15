@@ -1,3 +1,9 @@
+/**
+ *  CSE 578 Project
+ *  Author: Yu-Chuan, Hung
+ *  Email: yhung17@asu.edu
+ *  ASUID: 1219439611
+ */
 const heatmap = (data, country)  => {
     console.log("Loading heatmap");
     // console.log(data)
