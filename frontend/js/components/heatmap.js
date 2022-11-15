@@ -1,60 +1,51 @@
 const heatmap = (data, country)  => {
     console.log("Loading heatmap");
-    console.log(data)
-    data.map(d => {d.date = d.EventTime.substr(8,2), d.time = d.EventTime.substr(11,2)});
-    // draw heatmap based on country
-    data = data.filter(d => d.SourceCountry == country);
-    console.log(data)
-    // set x and y values
-    const xData = Array.from(new Set(data.map(d => d.date)))
-    const yData = Array.from(new Set(data.map(d => (d.time))))
-    xData.sort()
-    yData.sort().reverse()
-    console.log(xData)
-    console.log(yData)
+    // console.log(data)
+    let preProcessData = dataPreProcess(data, country)
+    const xData = preProcessData[0]
+    const yData = preProcessData[1]
+    data = preProcessData[2]
     // setup dimensions and margins
-    const margin = {top: 90, right: 25, bottom: 30, left: 36},
-    width = 250,
-    height = 800 - margin.top - margin.bottom;
+    const margin = {top: 90, right: 25, bottom: 30, left: 36}
+    const width = 250
+    const height = 800 - margin.top - margin.bottom;
+    // build x scales and axis:
+    const x = d3.scaleBand()
+                    .range([ 0, width ])
+                    .domain(xData)
+                    .padding(0.04);
+    // build y scales and axis:
+    const y = d3.scaleBand()
+                    .range([ height, 0 ])
+                    .domain(yData)
+                    .padding(0.04);
+     // Build color scale
+    var color = d3.scaleSequential()
+                    .interpolator(d3.interpolateReds)
+                    .domain([1,80])
+    // create a tooltip
+    var tooltip = d3.select("body").append("div")
+                    .attr("class", "tooltip_heatmap")
+                    .style("opacity", 0)
+                    // .style("position", "relative")
     // remove the chart before drawing a new one
     d3.select("#heatmap svg").remove();
     // append the svg object to the body of the page
     const svg = d3.select("#heatmap")
-        .append("svg")
-        .attr("width", 300)
-        .attr("height", height + margin.top + margin.bottom)
-        .append("g")
-        .attr("transform", `translate(${margin.left}, ${margin.top})`);
-    // build x scales and axis:
-    const x = d3.scaleBand()
-        .range([ 0, width ])
-        .domain(xData)
-        .padding(0.04);
+                    .append("svg")
+                    .attr("width", 300)
+                    .attr("height", height + margin.top + margin.bottom)
+                    .append("g")
+                    .attr("transform", `translate(${margin.left}, ${margin.top})`);
     svg.append("g")
-        .style("font-size", 12)
-        .attr("transform", `translate(0, -15)`)
-        .call(d3.axisBottom(x).tickSize(0))
-        .select(".domain").remove()
-
-    // build y scales and axis:
-    const y = d3.scaleBand()
-        .range([ height, 0 ])
-        .domain(yData)
-        .padding(0.04);
+            .style("font-size", 12)
+            .attr("transform", `translate(0, -15)`)
+            .call(d3.axisBottom(x).tickSize(0))
+            .select(".domain").remove()
     svg.append("g")
-        .style("font-size", 12)
-        .call(d3.axisLeft(y).tickSize(0).tickFormat(d => d + ":00"))
-        .select(".domain").remove()
-     // Build color scale
-    var color = d3.scaleSequential()
-        .interpolator(d3.interpolateReds)
-        .domain([1,80])
-
-    // create a tooltip
-    var tooltip = d3.select("body").append("div")
-        .attr("class", "tooltip_heatmap")
-        .style("opacity", 0)
-        // .style("position", "absolute")
+            .style("font-size", 12)
+            .call(d3.axisLeft(y).tickSize(0).tickFormat(d => d + ":00"))
+            .select(".domain").remove()
     // mouseover event handler function
     var mouseover = function(d) {
         tooltip
@@ -98,5 +89,17 @@ svg.selectAll()
     .on("mouseover", mouseover)
     .on("mousemove", mousemove)
     .on("mouseleave", mouseleave)
+}
+function dataPreProcess(data, country) {
+    // get data and time
+    data.map(d => {d.date = d.EventTime.substr(8,2), d.time = d.EventTime.substr(11,2)});
+    // draw heatmap based on country
+    countryData = data.filter(d => d.SourceCountry == country);
+    // set x and y values
+    const xData = Array.from(new Set(data.map(d => d.date)))
+    const yData = Array.from(new Set(data.map(d => (d.time))))
+    xData.sort()
+    yData.sort().reverse()
+    return [xData, yData, countryData]
 }
 
