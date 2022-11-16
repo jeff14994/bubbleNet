@@ -26,7 +26,7 @@ const init = () => {
     const height = d3.select('#map').style('height').replace('px','');
 
     // Initialize background map (source: https://d3-graph-gallery.com/graph/backgroundmap_basic.html)
-    projection = d3.geoEquirectangular()
+    projection = d3.geoMercator()
                         .scale(width / 2 / Math.PI)
                         .rotate([0, 0])
                         .center([0, 0])
