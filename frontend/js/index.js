@@ -8,13 +8,11 @@ document.addEventListener('DOMContentLoaded', function () {
     Promise.all([d3.csv('/data/data.csv')]).then(function (values) {
         init();
         data = preProcess(values[0]);
-        console.log("data", data);
         bubble(data, svg, projection, '2019-03-10 mst', '2019-03-10 mst'); // render bubbles in map
         showSpinner(false);
-        // set initial country to AZ
+        // set initial country AZ
         const country = 'AZ';
         heatmap(values[0], country);
-
     });
 });
 
