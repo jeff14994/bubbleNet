@@ -6,13 +6,15 @@ var data, svg, projection;
 document.addEventListener('DOMContentLoaded', function () {
     showSpinner(true);
     Promise.all([d3.csv('/data/data.csv')]).then(function (values) {
-        init();
-        data = preProcess(values[0]);
-        bubble(data, svg, projection, '2019-03-10 mst', '2019-03-10 mst'); // render bubbles in map
-        showSpinner(false);
-        // set initial country AZ
-        const country = 'AZ';
+        // init();
+        // data = preProcess(values[0]);
+        // console.log("data", data);
+        // bubble(data, svg, projection, '2019-03-10 mst', '2019-03-10 mst'); // render bubbles in map
+        // showSpinner(false);
+        // set initial country to empty
+        var country = 'AZ';
         heatmap(values[0], country);
+
     });
 });
 
