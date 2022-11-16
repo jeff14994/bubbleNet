@@ -44,9 +44,9 @@ const bubble = (data, svg, projection, startDate, endDate) => {
             return 'level-2';
         } else if (value <= 2500) {
             return 'level-3';
-        } else if (value <= 10000) {
+        } else if (value <= 12500) {
             return 'level-4';
-        } else if (value <= 50000) {
+        } else if (value <= 62500) {
             return 'level-5';
         } else {
             return 'level-6';
@@ -54,17 +54,24 @@ const bubble = (data, svg, projection, startDate, endDate) => {
     }
 
     const formattedData = dateRangeFilter(data, startDate, endDate);
+    const width = svg.style('width').replace('px','');
+    const height = svg.style('height').replace('px','');
 
-    const eachBubble = svg.selectAll('.bubble')
-        .data(formattedData).enter();
+    const simulation = d3.forceSimulation()
+        .force("charge", d3.forceManyBody().strength(-0.5))
+        .force("collide", d3.forceCollide(12))
+        .force('center', d3.forceCenter(width / 1.8, height / 2.4));
+    
+    formattedData.forEach(d => {
+        const pos = projection([countryGeo[d.sourceCountry]['Longitude (average)'], countryGeo[d.sourceCountry]['Latitude (average)']]);
+        d.x = pos[0];
+        d.y = pos[1];
+    });
 
-    eachBubble.append('ellipse')
+    const node = svg.selectAll('.bubble').data(formattedData.filter(d => d.numberOfAlerts > 0)).enter().append('circle')
         .attr('class', 'bubble')
         .attr('id', d => d.sourceCountry)
-        .attr('cx', d => projection([d.sourceLongitude, d.sourceLatitude])[0])
-        .attr('cy', d => projection([d.sourceLongitude, d.sourceLatitude])[1])
-        .attr('rx', d => size(level(d.numberOfAlerts)))
-        .attr('ry', d => size(level(d.numberOfAlerts)) / 1.5)
+        .attr('r', d => size(level(d.numberOfAlerts)))
         .attr('stroke-width', '1px')
         .attr('stroke', '#000000')
         .attr('fill', d => color(level(d.numberOfAlerts)))
@@ -88,10 +95,10 @@ const bubble = (data, svg, projection, startDate, endDate) => {
                 .style('opacity', '0.8')
                 .style('border-radius', '8px')
                 .style('pointer-events', 'none')
-                .style('left', (d.pageX) + 'px')
-                .style('top', (d.pageY) + 'px');
+                .style('top', `${(d.pageY)}px`)
+                .style('left', `${(d.pageX)}px`);
         })
-        .on('mouseout', (d,i) => {
+        .on('mouseout', () => {
             div.transition()
                 .duration(500)
                 .style('opacity', 0);
@@ -106,23 +113,29 @@ const bubble = (data, svg, projection, startDate, endDate) => {
                     .data(i.target).enter()
                     .append('path')
                     .classed('target-line', true)
-                    .attr('d', d => d3.line()([[projection([i.sourceLongitude, i.sourceLatitude])[0], projection([i.sourceLongitude, i.sourceLatitude])[1]], [projection(d)[0], projection(d)[1]]]))
+                    .attr('d', d => d3.line()([[i.x, i.y], [projection(d.split(',').reverse())[0], projection(d.split(',').reverse())[1]]]))
                     .attr('stroke', '#000000')
                     .attr('stroke-width', '1px')
                     .attr('fill', 'none');
-                d3.select(d.currentTarget).raise();
             }
         });
     
     // We need to discuss if we want to keep country name in the middle of the bubble.
-    eachBubble.append('text')
-        .attr('class', 'bubble-name')
-        .attr('x', d => projection([d.sourceLongitude, d.sourceLatitude])[0])
-        .attr('y', d => projection([d.sourceLongitude, d.sourceLatitude])[1] + 5)
+    const title = svg.selectAll('.bubble-country').data(formattedData.filter(d => d.numberOfAlerts > 0)).enter().append('text')
+        .attr('class', 'bubble-country')
         .text(d => d.sourceCountry)
         .attr('text-anchor','middle')
         .style('font-family', 'arial')
         .style('font-size', '12px');
+
+    simulation.nodes(formattedData.filter(d => d.numberOfAlerts > 0)).on("tick", () => {
+        node
+            .attr('cx', d => d.x)
+            .attr('cy', d => d.y);
+        title
+            .attr('x', d => d.x)
+            .attr('y', d => d.y + 5);
+    });
 }
 
 /**
