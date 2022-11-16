@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', function () {
     Promise.all([d3.csv('/data/data.csv')]).then(function (values) {
         init();
         data = preProcess(values[0]);
-        bubble(data, svg, projection, '2019-03-10 mst', '2019-03-10 mst'); // render bubbles in map
+        bubble(data, svg, projection, '2019-03-10 00:00', '2019-03-10 00:00'); // render bubbles in map
         showSpinner(false);
         // set initial country AZ
         const country = 'AZ';
