@@ -11,8 +11,10 @@ const heatmap = (data, country)  => {
     const xData = preProcessData[0]
     const yData = preProcessData[1]
     data = preProcessData[2]
+    console.log("Loading sub bar chart")
+    barChart(data, country)
     // setup dimensions and margins
-    const margin = {top: 90, right: 25, bottom: 30, left: 36}
+    const margin = {top: 30, right: 25, bottom: 30, left: 36}
     const width = 250
     const height = 800 - margin.top - margin.bottom;
     // build x scales and axis:
@@ -107,16 +109,83 @@ const heatmap = (data, country)  => {
             .on("mousemove", mousemove)
             .on("mouseleave", mouseleave)
 }
-function dataPreProcess(data, country) {
+const barChart = (data, country) => {
+    let preProcessData = barDataPreProcess(data, country)
+    xData = preProcessData[0] 
+    yData = preProcessData[1] 
+    barData = preProcessData[2]
+    d3.select('#heatmap_barchart svg').remove();
+
+    // set width and height
+    const width = 300
+    const height = width * 0.5
+    const margin = 40;
+    const svg = d3.select('#heatmap_barchart')
+                    .append('svg')
+                    .attr('width', width)
+                    .attr('height', height);
+    // set x scale
+    const xScale = d3.scaleBand()
+            .domain(xData)
+            // set the show range of x bar
+            .range([margin*2, width - margin/2 + 45])
+            .padding(0.2)
+    // set y scale
+    const yScale = d3.scaleLinear()
+            .domain([0, d3.max(yData)])
+            .range([height - margin, margin]) 
+            .nice() 
+    // set y axis
+    const yAxis = d3.axisLeft(yScale)
+            .ticks(5)
+            .tickSize(3)
+            const yAxisGroup = svg.append("g")
+                .call(yAxis)
+                .attr("transform", `translate(${margin},0)`)
+    // draw bar chart
+    const bar = svg.selectAll("rect")
+                .data(barData)
+                .join("rect")
+                // -40 is to make the bar chart align with the heatmap
+                .attr("x", d => xScale(d.key) - 40) 
+                .attr("y", d => yScale(d.value))
+                .attr("width", xScale.bandwidth())
+                .attr("height", d => {
+                    return height - margin - yScale(d.value)
+                })
+                .attr("fill", "#808080")
+                .attr('cursor', 'pointer')
+}
+const dataPreProcess = (data, country) => {
+    console.log(country)
     // get data and time
     data.map(d => {d.date = d.EventTime.substr(8,2), d.time = d.EventTime.substr(11,2)});
     // draw heatmap based on country
     countryData = data.filter(d => d.SourceCountry == country);
+    console.log(countryData)
     // set x and y values
-    const xData = Array.from(new Set(data.map(d => d.date)))
-    const yData = Array.from(new Set(data.map(d => (d.time))))
+    const xData = Array.from(new Set(countryData.map(d => d.date)))
+    const yData = Array.from(new Set(countryData.map(d => d.time)))
     xData.sort()
     yData.sort().reverse()
     return [xData, yData, countryData]
 }
 
+const barDataPreProcess = (data, country) => {
+    // filter data based on country
+    data = data.filter(d => d.SourceCountry == country);
+    // calculate the sum attack in each time
+    var groupByTime = d3.group(data, d => d.date)
+    console.log(groupByTime)
+    groupByTime = Array.from(groupByTime, ([key, value]) => ({key, value}));
+    // sum the attack in each day
+    groupByTime.map(d => d.value = d3.sum(d.value, d => d.ConnCount))
+    const xData = Array.from(new Set(groupByTime.map(d => d.key)))
+    xData.sort()
+    // console.log(xData)
+    const yData = Array.from(new Set(groupByTime.map(d => d.value)))
+    groupByTime.sort()
+    // console.log(yData)
+    // console.log(groupByTime)
+    return [xData, yData, groupByTime]
+}
