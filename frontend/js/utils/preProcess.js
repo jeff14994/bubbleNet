@@ -18,7 +18,7 @@
  *                                      detail: [
  *                                                  {ID:string, Category: string ,ConnCount: number, ProtocolType: string},
  *                                      ],
- *                                      target: [string],
+ *                                      target: [TargetCountry: string],
  *       0-index array with 24 items -> time: [
  *                                                  {       
  *                                                          numberOfAlerts: number,
@@ -58,11 +58,11 @@ const preProcess = (rawData) => {
         regionTable[record['SourceCountry']].date[dateKey].detail.push({ID: record['ID'], Category: record['Category'], ConnCount: record['ConnCount'], ProtocolType: record['ProtocolType']});
         regionTable[record['SourceCountry']].date[dateKey].time[timeKey].numberOfAlerts += 1;
         regionTable[record['SourceCountry']].date[dateKey].time[timeKey].detail.push({ID: record['ID'], Category: record['Category'], ConnCount: record['ConnCount'], ProtocolType: record['ProtocolType']});
-        if (!regionTable[record['SourceCountry']].date[dateKey].target.includes(`${record['TargetLatitude']},${record['TargetLongitude']}`)) {
-            regionTable[record['SourceCountry']].date[dateKey].target.push(`${record['TargetLatitude']},${record['TargetLongitude']}`);
+        if (!regionTable[record['SourceCountry']].date[dateKey].target.includes(record['TargetCountry'])) {
+            regionTable[record['SourceCountry']].date[dateKey].target.push(record['TargetCountry']);
         }
-        if (!regionTable[record['SourceCountry']].date[dateKey].time[timeKey].target.includes(`${record['TargetLatitude']},${record['TargetLongitude']}`)) {
-            regionTable[record['SourceCountry']].date[dateKey].time[timeKey].target.push(`${record['TargetLatitude']},${record['TargetLongitude']}`);
+        if (!regionTable[record['SourceCountry']].date[dateKey].time[timeKey].target.includes(record['TargetCountry'])) {
+            regionTable[record['SourceCountry']].date[dateKey].time[timeKey].target.push(record['TargetCountry']);
         }
     });    
     return regionTable;

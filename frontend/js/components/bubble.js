@@ -107,22 +107,28 @@ const bubble = (data, svg, projection, startDate, endDate) => {
             if (d3.select(d.currentTarget).classed('selected')) {
                 d3.select(d.currentTarget).classed('selected', false);
                 d3.selectAll('.target-line').remove();
+                d3.selectAll('.bubble, .bubble-country').attr('opacity', '1');
             } else {
                 d3.select(d.currentTarget).classed('selected', true);
                 svg.selectAll('.target-line')
                     .data(i.target).enter()
                     .append('path')
                     .classed('target-line', true)
-                    .attr('d', d => d3.line()([[i.x, i.y], [projection(d.split(',').reverse())[0], projection(d.split(',').reverse())[1]]]))
+                    .attr('d', d => d3.line()([[i.x, i.y], [d3.select(`#${d}`).attr('cx'), d3.select(`#${d}`).attr('cy')]]))
                     .attr('stroke', '#000000')
                     .attr('stroke-width', '1px')
                     .attr('fill', 'none');
+                d3.selectAll('.bubble, .bubble-country').attr('opacity', '0.3');
+                d3.selectAll(`#${d3.select(d.currentTarget).attr('id')}`).attr('opacity', '1').raise();
+                i.target.map(v => {
+                    d3.selectAll(`#${v}`).attr('opacity', '1').raise();
+                });
             }
         });
     
-    // We need to discuss if we want to keep country name in the middle of the bubble.
     const title = svg.selectAll('.bubble-country').data(formattedData.filter(d => d.numberOfAlerts > 0)).enter().append('text')
         .attr('class', 'bubble-country')
+        .attr('id', d => d.sourceCountry)
         .text(d => d.sourceCountry)
         .attr('text-anchor','middle')
         .style('font-family', 'arial')

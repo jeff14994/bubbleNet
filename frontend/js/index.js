@@ -8,8 +8,8 @@ document.addEventListener('DOMContentLoaded', function () {
     Promise.all([d3.csv('/data/data.csv')]).then(function (values) {
         init();
         data = preProcess(values[0]);
-        bubble(data, svg, projection, '2019-03-10 00:00', '2019-03-10 00:00'); // render bubbles in map
         showSpinner(false);
+        bubble(data, svg, projection, '2019-03-10 00:00', '2019-03-10 00:00'); // render bubbles in map
         // set initial country AZ
         const country = 'AZ';
         heatmap(values[0], country);
@@ -30,7 +30,7 @@ const init = () => {
                         .scale(width / 2 / Math.PI)
                         .rotate([0, 0])
                         .center([0, 0])
-                        .translate([width / 2, height / 1.75]);
+                        .translate([width / 2, height / 2]);
                         
 
     d3.json('https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson').then( function(data) {
