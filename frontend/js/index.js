@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', function () {
         data = preProcess(values[0]);
         showSpinner(false);
         bubble(data, svg, projection, '2019-03-10 00:00', '2019-03-10 00:00'); // render bubbles in map
+        time_alert(data,"","");//data seg, current selected country, date
         // set initial country AZ
         const country = 'AZ';
         heatmap(values[0], country);
