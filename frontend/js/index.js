@@ -3,9 +3,37 @@
  */
 var data, svg, projection;
 
+// Global variable used to implement selections across components
+// Always initialized to null values
+var globalData = {
+    country: null,
+    date: null,
+}
+
+// Proxy acts as an Event Handler to updatee components on change
+const proxyHandler = {
+    set(target, prop, value) {
+      if (target[prop] === value) {
+        return;
+      }
+      target[prop] = value;
+
+
+      // ** update the components here **
+
+      if (prop === "country") {
+        updateBulletCountry(target);
+      }
+      else if (prop === "date") {
+        updateBulletDate(target);
+      }
+    }
+}
+const globalProxy = new Proxy(globalData, proxyHandler)
+
 document.addEventListener('DOMContentLoaded', function () {
     showSpinner(true);
-    Promise.all([d3.csv('/data/data.csv')]).then(function (values) {
+    Promise.all([d3.csv('/frontend/data/data.csv')]).then(function (values) {
         init();
         data = preProcess(values[0]);
         showSpinner(false);
@@ -14,6 +42,7 @@ document.addEventListener('DOMContentLoaded', function () {
         // set initial country AZ
         const country = 'AZ';
         heatmap(values[0], country);
+        bullet(data);
     });
 });
 
