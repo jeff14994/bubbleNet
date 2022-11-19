@@ -50,6 +50,7 @@ const yClean2 = (x) => {
  */
 const bullet = (data) => {
 
+    console.log(data)
     // preprocessing 
     for (const cn of Object.keys(data)) {
       for (const date of Object.keys(data[cn].date)) {
@@ -243,7 +244,7 @@ const bullet = (data) => {
               .data(bar_data2)
               .enter()
               .append("rect")
-                .attr("class", "worldBar")
+                .attr("class", "worldBar2")
                 .attr("x", function(d) { return x2(d.Label); })
                 .attr("y", function(d) { return yClean2(d.Value); })
                 .attr("width", x2.bandwidth())
@@ -259,12 +260,34 @@ const updateBulletCountry = (target) => {
     const date = target.date;
 
     if (!country) {
-      d3.selectAll(".bulletBar").remove();
-      d3.selectAll(".bulletLine").remove();
+      var bulletBars = d3.selectAll(".bulletBar");
+      bulletBars.transition()
+        .duration(2000) // 2 seconds
+        .attr("y", function(d) { return yClean(1); })
+        .attr("height", function(d) { return height - yClean(1); })
+        .on("end", () => bulletBars.remove())
+      var bulletLines = d3.selectAll(".bulletLine");
+      bulletLines.transition()
+        .duration(2000) // 2 seconds
+        .attr("y", function(d) { return yClean(1); })
+        .on("end", () => bulletLines.remove())
+
+      var bulletBars2 = d3.selectAll(".bulletBar2");
+        bulletBars2.transition()
+          .duration(2000) // 2 seconds
+          .attr("y", function(d) { return yClean2(1); })
+          .attr("height", function(d) { return height - yClean2(1); })
+          .on("end", () => bulletBars2.remove())
+      var bulletLines2 = d3.selectAll(".bulletLine2");
+        bulletLines2.transition()
+          .duration(2000) // 2 seconds
+          .attr("y", function(d) { return yClean2(1); })
+          .on("end", () => bulletLines2.remove())
       return;
     }
 
     const svg = d3.select("#attributeChart");
+    const svg2 = d3.select("#categoryChart");
 
     var existingBullet = svg.selectAll(".bulletBar")
 
@@ -272,15 +295,26 @@ const updateBulletCountry = (target) => {
       { Label: "udp", Value: country_data1[country]["udp"]},
       { Label: "tcp", Value: country_data1[country]["tcp"]},
     ];
+    var line_data2 = [
+      { Label: "Recon.Scanning", Value: country_data2[country]["Recon.Scanning"]},
+      { Label: "Attempt.Login", Value: country_data2[country]["Attempt.Login"]},
+    ];
+
     var bullet_data1;
+    var bullet_data2;
     if (!date) {
       bullet_data1 = line_data1;
+      bullet_data2 = line_data2;
     }
     else {
       bullet_data1 = [
-        { Label: "udp", Value: (country_days1[date][country]["udp"] > 0 ? country_days1[date][country]["udp"] : 1)},
-        { Label: "tcp", Value: (country_days1[date][country]["tcp"] > 0 ? country_days1[date][country]["tcp"] : 1)},
-      ]
+        { Label: "udp", Value: country_days1[date][country]["udp"]},
+        { Label: "tcp", Value: country_days1[date][country]["tcp"]},
+      ];
+      bullet_data2 = [
+        { Label: "Recon.Scanning", Value: country_days2[date][country]["Recon.Scanning"]},
+        { Label: "Attempt.Login", Value: country_days2[date][country]["Attempt.Login"]},
+      ];
     }
 
     if (existingBullet.empty()) {
@@ -357,6 +391,40 @@ const updateBulletCountry = (target) => {
           .transition()
           .duration(2000) // 2 seconds
           .attr("y", function(d) { return yClean(d.Value); });
+
+
+      svg2.selectAll("mybullet2")
+          .data(bullet_data2)
+          .enter()
+          .append("rect")
+            .attr("class", "bulletBar2")
+            .attr("x", function(d) { return x2(d.Label) + (0.25 * x2.bandwidth()); })
+            .attr("y", function(d) { return y2(1); })
+            .attr("width", 0.5 * x2.bandwidth())
+            .attr("height", function(d) { return height - yClean2(1); })
+            .attr("fill", "#C0C0C0")
+            .on("mouseover", mouseover)
+            .on("mousemove", mousemove)
+            .on("mouseleave", mouseleave)
+          svg2.selectAll(".bulletBar2")
+            .transition()
+            .duration(2000) // 2 seconds
+            .attr("y", function(d) { return yClean2(d.Value); })
+            .attr("height", function(d) { return height - yClean2(d.Value); })
+        svg2.selectAll("myline2")
+            .data(line_data2)
+            .enter()
+            .append("rect")
+              .attr("class", "bulletLine2")
+              .attr("x", function(d) { return x2(d.Label); })
+              .attr("y", function(d) { return y2(1); })
+              .attr("width", x2.bandwidth())
+              .attr("height", function(d) { return x2.bandwidth() * 0.02; })
+              .attr("fill", "#707070")
+          svg2.selectAll(".bulletLine2")
+              .transition()
+              .duration(2000) // 2 seconds
+              .attr("y", function(d) { return yClean2(d.Value); });
     }
     else {
       svg.selectAll(".bulletBar")
@@ -365,11 +433,23 @@ const updateBulletCountry = (target) => {
         .duration(2000) // 2 seconds
         .attr("y", function(d) { return yClean(d.Value); })
         .attr("height", function(d) { return height - yClean(d.Value); })
-      svg.selectAll(".bulletLine")
-        .data(line_data1)
+        svg.selectAll(".bulletLine")
+          .data(line_data1)
+          .transition()
+          .duration(2000) // 2 seconds
+          .attr("y", function(d) { return yClean(d.Value); });
+
+        svg2.selectAll(".bulletBar2")
+        .data(bullet_data2)
         .transition()
         .duration(2000) // 2 seconds
-        .attr("y", function(d) { return yClean(d.Value); });
+        .attr("y", function(d) { return yClean2(d.Value); })
+        .attr("height", function(d) { return height - yClean2(d.Value); })
+        svg2.selectAll(".bulletLine2")
+          .data(line_data2)
+          .transition()
+          .duration(2000) // 2 seconds
+          .attr("y", function(d) { return yClean2(d.Value); });
       }
 }
 
@@ -378,30 +458,52 @@ const updateBulletDate = (target) => {
   const date = target.date;
 
   const svg = d3.select("#attributeChart");
+  const svg2 = d3.select("#categoryChart");
 
   var newBarData1;
   var newBulletData1;
+  var newBarData2;
+  var newBulletData2;
+
   if (date) {
     newBarData1 = [
-      { Label: "udp", Value: (world_days1[date]["udp"] > 0 ? world_days1[date]["udp"] : 1)},
-      { Label: "tcp", Value: (world_days1[date]["tcp"] > 0 ? world_days1[date]["tcp"] : 1)},
+      { Label: "udp", Value: world_days1[date]["udp"]},
+      { Label: "tcp", Value: world_days1[date]["tcp"]},
     ];
+    newBarData2 = [
+      { Label: "Recon.Scanning", Value: world_days2[date]["Recon.Scanning"]},
+      { Label: "Attempt.Login", Value: world_days2[date]["Attempt.Login"]},
+    ];
+
     if (country) {
       newBulletData1 = [
-        { Label: "udp", Value: (country_days1[date][country]["udp"] > 0 ? country_days1[date][country]["udp"] : 1)},
-        { Label: "tcp", Value: (country_days1[date][country]["tcp"] > 0 ? country_days1[date][country]["tcp"] : 1)},
+        { Label: "udp", Value: country_days1[date][country]["udp"]},
+        { Label: "tcp", Value: country_days1[date][country]["tcp"]},
+      ];
+      newBulletData2 = [
+        { Label: "Recon.Scanning", Value: country_days2[date][country]["Recon.Scanning"]},
+        { Label: "Attempt.Login", Value: country_days2[date][country]["Attempt.Login"]},
       ];
     }
   }
   else {
     newBarData1 = [
-      { Label: "udp", Value: (world_data1["udp"] > 0 ? world_data1["udp"] : 1) },
-      { Label: "tcp", Value: (world_data1["tcp"] > 0 ? world_data1["tcp"] : 1)},
+      { Label: "udp", Value: world_data1["udp"] },
+      { Label: "tcp", Value: world_data1["tcp"]},
     ];
+    newBarData2 = [
+      { Label: "Recon.Scanning", Value: world_data2["Recon.Scanning"] },
+      { Label: "Attempt.Login", Value: world_data2["Attempt.Login"]},
+    ];
+
     if (country) {
       newBulletData1 = [
-        { Label: "udp", Value: (country_data1[country]["udp"] > 0 ? country_data1[country]["udp"] : 1)},
-        { Label: "tcp", Value: (country_data1[country]["tcp"] > 0 ? country_data1[country]["tcp"] : 1)},
+        { Label: "udp", Value: country_data1[country]["udp"]},
+        { Label: "tcp", Value: country_data1[country]["tcp"]},
+      ];
+      newBulletData2 = [
+        { Label: "Recon.Scanning", Value: country_data2[country]["Recon.Scanning"]},
+        { Label: "Attempt.Login", Value: country_data2[country]["Attempt.Login"]},
       ];
     }
   }
@@ -413,6 +515,13 @@ const updateBulletDate = (target) => {
       .attr("y", function(d) { return yClean(d.Value); })
       .attr("height", function(d) { return height - yClean(d.Value); });
 
+  svg2.selectAll(".worldBar2")
+    .data(newBarData2)
+    .transition()
+    .duration(2000) // 2 seconds
+    .attr("y", function(d) { return yClean2(d.Value); })
+    .attr("height", function(d) { return height - yClean2(d.Value); });
+
   const existingBullet = svg.selectAll(".bulletBar")
   if (country && !existingBullet.empty()) {
     existingBullet.data(newBulletData1)
@@ -420,5 +529,12 @@ const updateBulletDate = (target) => {
       .duration(2000) // 2 seconds
       .attr("y", function(d) { return yClean(d.Value); })
       .attr("height", function(d) { return height - yClean(d.Value); })
+    
+    svg2.selectAll(".bulletBar2")
+      .data(newBulletData2)
+      .transition()
+      .duration(2000) // 2 seconds
+      .attr("y", function(d) { return yClean2(d.Value); })
+      .attr("height", function(d) { return height - yClean2(d.Value); })
   }
 }
