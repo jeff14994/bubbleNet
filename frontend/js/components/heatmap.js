@@ -7,6 +7,7 @@
 const heatmap = (data, country, num)  => {
     console.log("Loading heatmap");
     country = country || "";
+    range = colorRange(country)
     // console.log(data)
     let preProcessData = heatmapDataPreProcess(data, country, num)
     console.log("Loading sub bar chart")
@@ -34,7 +35,7 @@ const heatmap = (data, country, num)  => {
      // Build color scale
     var color = d3.scaleSequential()
                     .interpolator(d3.interpolateReds)
-                    .domain([1,15000])
+                    .domain([1,range])
     // create a tooltip
     var tooltip = d3.select("body").append("div")
                     .attr("class", "tooltip_heatmap")
@@ -118,8 +119,9 @@ const barChart = (data, country) => {
     xData = preProcessData[0] 
     yData = preProcessData[1] 
     barData = preProcessData[2]
+    // var length = 1
+    var length = (Math.random() * 10)
     d3.select('#heatmap_barchart svg').remove();
-
     // set width and height
     const width = 300
     const height = width * 0.5
@@ -130,36 +132,63 @@ const barChart = (data, country) => {
                     .attr('height', height);
     // set x scale
     const xScale = d3.scaleBand()
-            .domain(xData)
-            // set the show range of x bar
-            .range([margin*2, width - margin/2 + 45])
-            .padding(0.2)
+                        .domain(xData)
+                        // set the show range of x bar
+                        .range([margin*2, width - margin/2 + 45])
+                        .padding(0.2)
     // set y scale
     const yScale = d3.scaleLinear()
-            .domain([0, d3.max(yData)])
-            .range([height - margin, margin]) 
-            .nice() 
+                        .domain([0, d3.max(yData)])
+                        .range([height - margin, margin]) 
+                        .nice() 
     // set y axis
     const yAxis = d3.axisLeft(yScale)
-            .ticks(5)
-            .tickSize(3)
-            const yAxisGroup = svg.append("g")
-                .call(yAxis)
-                .style("font-size", 8)
-                .attr("transform", `translate(${margin + 3}, 0)`)
+                        .ticks(5)
+                        .tickSize(3)
+    const yAxisGroup = svg.append("g")
+                            .call(yAxis)
+                            .style("font-size", 8)
+                            .attr("transform", `translate(${margin + 3}, 0)`)
     // draw bar chart
     const bar = svg.selectAll("rect")
-                .data(barData)
-                .join("rect")
-                // -40 is to make the bar chart align with the heatmap
-                .attr("x", d => xScale(d.key) - 40) 
-                .attr("y", d => yScale(d.value))
-                .attr("width", xScale.bandwidth())
-                .attr("height", d => {
-                    return height - margin - yScale(d.value)
-                })
-                .attr("fill", "#808080")
-                .attr('cursor', 'pointer')
+                    .data(barData)
+                    .join("rect")
+                    .attr("class", "allAlerts")
+                    // -40 is to make the bar chart align with the heatmap
+                    .attr("x", d => xScale(d.key) - 40) 
+                    .attr("y", d => yScale(d.value))
+                    .attr("width", xScale.bandwidth())
+                    .attr("height", d => {
+                        return height - margin - yScale(d.value)
+                    })
+                    .attr("fill", "#D3D3D3")
+                    .attr('cursor', 'pointer')
+    var country = true
+    if (country) {
+        // d3.select('.singleCountry').remove();
+        // draw bar chart
+        const barCountry = svg.selectAll("rectSingleCountry")
+                                .data(barData)
+                                .join("rect")
+                                .attr("class", "singleCountry")
+                                // -40 is to make the bar chart align with the heatmap
+                                // +7 is to make the bar chart align with the class allAlerts bar chart
+                                .attr("x", d => xScale(d.key) - 40 + 7) 
+                                .attr("y", d => yScale(d.value/length))
+                                .attr("width", xScale.bandwidth() - 15)
+                                .attr("height", d => {
+                                    return height - margin - yScale((d.value)/length)
+                                })
+                                .attr("fill", "#808080")
+                                // .attr("fill", "#000000")
+                                .attr('cursor', 'pointer')
+                                .on("click", mouseClick)
+    }
+    // Callback function for mouse click
+    function mouseClick() {
+        console.log("clicked")
+    }
+                
 }
 const heatmapDataPreProcess = (data, country, num) => {
     console.log(country)
@@ -223,4 +252,13 @@ const heatmapGroupDataByDateHour = (data) => {
             }, {}));
     console.log(result)
     return result
+}
+const colorRange = (country) => {
+    var range;
+    if (country) {
+        range = 500
+        return range
+    }
+    range = 15000
+    return range
 }
