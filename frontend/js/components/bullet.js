@@ -50,7 +50,7 @@ const yClean2 = (x) => {
  */
 const bullet = (data) => {
 
-    console.log(data)
+    // console.log(data)
     // preprocessing 
     for (const cn of Object.keys(data)) {
       for (const date of Object.keys(data[cn].date)) {
