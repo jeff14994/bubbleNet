@@ -4,15 +4,18 @@
  *  Email: yhung17@asu.edu
  *  ASUID: 1219439611
  */
-const heatmap = (data, country)  => {
+const heatmap = (data, country, num)  => {
     console.log("Loading heatmap");
     // console.log(data)
-    let preProcessData = dataPreProcess(data, country)
+    let preProcessData = heatmapDataPreProcess(data, country, num)
+    console.log("Loading sub bar chart")
+    barChart(data, country, num)
     const xData = preProcessData[0]
     const yData = preProcessData[1]
     data = preProcessData[2]
-    console.log("Loading sub bar chart")
-    barChart(data, country)
+    // console.log(data.length)
+    // console.log(data)
+
     // setup dimensions and margins
     const margin = {top: 30, right: 25, bottom: 30, left: 36}
     const width = 250
@@ -30,7 +33,7 @@ const heatmap = (data, country)  => {
      // Build color scale
     var color = d3.scaleSequential()
                     .interpolator(d3.interpolateReds)
-                    .domain([1,80])
+                    .domain([1,15000])
     // create a tooltip
     var tooltip = d3.select("body").append("div")
                     .attr("class", "tooltip_heatmap")
@@ -65,7 +68,7 @@ const heatmap = (data, country)  => {
     }
     var mousemove = function(e, i) {
         tooltip
-            .html("Number of alert: " + i.ConnCount)
+            .html("Number of alert: " + i.value)
             .style("opacity", "1")
             .style("position", "absolute")
             .style("left", (e.pageX) + "px")
@@ -101,7 +104,7 @@ const heatmap = (data, country)  => {
                 .attr("ry", 4)
                 .attr("width", x.bandwidth() )
                 .attr("height", y.bandwidth() )
-                .style("fill", function(d) { return color(d.ConnCount)} )
+                .style("fill", function(d) { return color(d.value)} )
                 .style("stroke-width", 4)
                 .style("stroke", "none")
                 .style("opacity", 0.8)
@@ -141,7 +144,8 @@ const barChart = (data, country) => {
             .tickSize(3)
             const yAxisGroup = svg.append("g")
                 .call(yAxis)
-                .attr("transform", `translate(${margin},0)`)
+                .style("font-size", 8)
+                .attr("transform", `translate(${margin + 3}, 0)`)
     // draw bar chart
     const bar = svg.selectAll("rect")
                 .data(barData)
@@ -156,13 +160,13 @@ const barChart = (data, country) => {
                 .attr("fill", "#808080")
                 .attr('cursor', 'pointer')
 }
-const dataPreProcess = (data, country) => {
+const heatmapDataPreProcess = (data, country, num) => {
     console.log(country)
     // get data and time
     data.map(d => {d.date = d.EventTime.substr(8,2), d.time = d.EventTime.substr(11,2)});
-    // draw heatmap based on country
-    countryData = data.filter(d => d.SourceCountry == country);
-    console.log(countryData)
+    var countryData = dataProcessHelper(data, country, num)
+    countryData = heatmapGroupDataByDateHour(countryData)
+    // console.log(countryData)
     // set x and y values
     const xData = Array.from(new Set(countryData.map(d => d.date)))
     const yData = Array.from(new Set(countryData.map(d => d.time)))
@@ -171,21 +175,50 @@ const dataPreProcess = (data, country) => {
     return [xData, yData, countryData]
 }
 
-const barDataPreProcess = (data, country) => {
-    // filter data based on country
-    data = data.filter(d => d.SourceCountry == country);
-    // calculate the sum alert in each time
-    var groupByTime = d3.group(data, d => d.date)
+const barDataPreProcess = (data, country, num) => {
+    const countryData = dataProcessHelper(data, country, num)
+    const groupByTime = groupDataByDate(countryData)
+    const xData = Array.from(new Set(groupByTime.map(d => d.key)))
+    const yData = Array.from(new Set(groupByTime.map(d => d.value)))
+    xData.sort()
+    groupByTime.sort()
+    // console.log(yData)
     console.log(groupByTime)
+    return [xData, yData, groupByTime]
+}
+// draw heatmap based on country or number is set
+const dataProcessHelper = (data, country, num) => {
+    // filter data based on country
+    if (country != "") {
+        countryData = data.filter(d => d.SourceCountry == country);
+    } else {
+        countryData = data.slice(0, num)
+    }
+    return countryData
+}
+// calculate the sum alert in each day
+const groupDataByDate = (data) => {
+    // group data by day
+    var groupByTime = d3.group(data, d => d.date)
     groupByTime = Array.from(groupByTime, ([key, value]) => ({key, value}));
     // sum the alert in each day
     groupByTime.map(d => d.value = d3.sum(d.value, d => d.ConnCount))
-    const xData = Array.from(new Set(groupByTime.map(d => d.key)))
-    xData.sort()
-    // console.log(xData)
-    const yData = Array.from(new Set(groupByTime.map(d => d.value)))
-    groupByTime.sort()
-    // console.log(yData)
-    // console.log(groupByTime)
-    return [xData, yData, groupByTime]
+    return groupByTime
+}
+
+// calculate the sum alert in each hour
+const heatmapGroupDataByDateHour = (data) => {
+    // https://stackoverflow.com/questions/64159357/sum-array-objects-by-multiple-keys
+    console.log(typeof data)
+    keys = ['date', 'time'],
+    result = Object.values(data.reduce((r, o) => {
+                const key = keys.map(k => o[k]).join('|');
+                // console.log(key)
+                if (!r[key]) 
+                    r[key] = { ...o, value: 0 };
+                r[key].value += parseInt(o.ConnCount);
+                return r;
+            }, {}));
+    console.log(result)
+    return result
 }
