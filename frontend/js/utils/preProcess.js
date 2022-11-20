@@ -54,9 +54,9 @@ const preProcess = (rawData) => {
         }
         const dateKey = new Date(record['EventTime']).toDateString('en-US');
         const timeKey = new Date(record['EventTime']).getHours();
-        regionTable[record['SourceCountry']].date[dateKey].numberOfAlerts += 1;
+        regionTable[record['SourceCountry']].date[dateKey].numberOfAlerts += parseInt(record['ConnCount']);
         regionTable[record['SourceCountry']].date[dateKey].detail.push({ID: record['ID'], Category: record['Category'], ConnCount: record['ConnCount'], ProtocolType: record['ProtocolType']});
-        regionTable[record['SourceCountry']].date[dateKey].time[timeKey].numberOfAlerts += 1;
+        regionTable[record['SourceCountry']].date[dateKey].time[timeKey].numberOfAlerts += parseInt(record['ConnCount']);
         regionTable[record['SourceCountry']].date[dateKey].time[timeKey].detail.push({ID: record['ID'], Category: record['Category'], ConnCount: record['ConnCount'], ProtocolType: record['ProtocolType']});
         if (!regionTable[record['SourceCountry']].date[dateKey].target.includes(record['TargetCountry'])) {
             regionTable[record['SourceCountry']].date[dateKey].target.push(record['TargetCountry']);
