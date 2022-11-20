@@ -6,13 +6,11 @@
  */
 
 
-function initTable(data, country) {
-    //default. to be discussed.
-    let date = "Sun Mar 10 2019";
+function initTable(data, country,date) {
 
     let table = document.querySelector("#table1 table");
 
-    let tabelHTML = "<thead>  <tr>  <th>ConnCount</th> <th>ID</th> <th>Category</th> <th>Targets</th> </tr> </thead> <tbody>";
+    let tabelHTML = "<thead>  <tr>  <th>ConnCount</th> <th>ID</th> <th>Category</th> <th>Protocol Type</th> </tr> </thead> <tbody>";
 
     for (let i = 0; i < data[country].date[date].numberOfAlerts; i++) {
         tabelHTML += '<tr>  <td>' + data[country].date[date].detail[i].ConnCount +
