@@ -65,7 +65,7 @@ const heatmap = (data, country)  => {
     }
     var mousemove = function(e, i) {
         tooltip
-            .html("Number of attack: " + i.ConnCount)
+            .html("Number of alert: " + i.ConnCount)
             .style("opacity", "1")
             .style("position", "absolute")
             .style("left", (e.pageX) + "px")
@@ -174,11 +174,11 @@ const dataPreProcess = (data, country) => {
 const barDataPreProcess = (data, country) => {
     // filter data based on country
     data = data.filter(d => d.SourceCountry == country);
-    // calculate the sum attack in each time
+    // calculate the sum alert in each time
     var groupByTime = d3.group(data, d => d.date)
     console.log(groupByTime)
     groupByTime = Array.from(groupByTime, ([key, value]) => ({key, value}));
-    // sum the attack in each day
+    // sum the alert in each day
     groupByTime.map(d => d.value = d3.sum(d.value, d => d.ConnCount))
     const xData = Array.from(new Set(groupByTime.map(d => d.key)))
     xData.sort()
