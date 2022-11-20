@@ -10,14 +10,13 @@ var globalData = {
     date: null,
 }
 
-// Proxy acts as an Event Handler to updatee components on change
+// Proxy acts as an Event Handler to update components on change
 const proxyHandler = {
     set(target, prop, value) {
       if (target[prop] === value) {
         return;
       }
       target[prop] = value;
-
 
       // ** update the components here **
 
@@ -33,7 +32,7 @@ const globalProxy = new Proxy(globalData, proxyHandler)
 
 document.addEventListener('DOMContentLoaded', function () {
     showSpinner(true);
-    Promise.all([d3.csv('/frontend/data/data.csv')]).then(function (values) {
+    Promise.all([d3.csv('../data/data.csv')]).then(function (values) {
         init();
         data = preProcess(values[0]);
         showSpinner(false);
@@ -43,6 +42,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const country = 'AZ';
         heatmap(values[0], country);
         bullet(data);
+        initTable(data, country);
     });
 });
 
