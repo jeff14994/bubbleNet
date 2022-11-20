@@ -6,6 +6,7 @@
  */
 const heatmap = (data, country, num)  => {
     console.log("Loading heatmap");
+    country = country || "";
     // console.log(data)
     let preProcessData = heatmapDataPreProcess(data, country, num)
     console.log("Loading sub bar chart")
@@ -186,14 +187,15 @@ const barDataPreProcess = (data, country, num) => {
     console.log(groupByTime)
     return [xData, yData, groupByTime]
 }
-// draw heatmap based on country or number is set
+// filter data based on country
 const dataProcessHelper = (data, country, num) => {
     // filter data based on country
     if (country != "") {
         countryData = data.filter(d => d.SourceCountry == country);
-    } else {
-        countryData = data.slice(0, num)
+        return countryData
     }
+    countryData = data.slice(0, num)
+    
     return countryData
 }
 // calculate the sum alert in each day

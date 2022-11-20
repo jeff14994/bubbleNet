@@ -39,8 +39,8 @@ document.addEventListener('DOMContentLoaded', function () {
         bubble(data, svg, projection, '2019-03-10 00:00', '2019-03-10 00:00'); // render bubbles in map
         time_alert(data,"","");//data seg, current selected country, date
         // set initial country to null
+        var country = country || '';
         // default: set the amount of data to be displayed by countryNum
-        const country = '';
         //! Caution: If you want to increase the countryNum, remember
         //! to change the color scale in the function heatmap
         const countryNum = 50000;
