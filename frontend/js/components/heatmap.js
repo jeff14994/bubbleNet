@@ -163,6 +163,7 @@ const barChart = (data, country) => {
                     })
                     .attr("fill", "#D3D3D3")
                     .attr('cursor', 'pointer')
+                    .on("click", (_,i) => mouseClick(i));
     var country = true
     if (country) {
         // d3.select('.singleCountry').remove();
@@ -181,17 +182,16 @@ const barChart = (data, country) => {
                                 })
                                 .attr("fill", "#808080")
                                 // .attr("fill", "#000000")
-                                .attr('cursor', 'pointer')
-                                .on("click", mouseClick)
+                                .attr('cursor', 'pointer');
     }
     // Callback function for mouse click
-    function mouseClick() {
-        console.log("clicked")
+    function mouseClick(d) {
+        globalProxy.date = new Date(`2019-03-${d.key} 00:00`).toDateString('en-US');
     }
                 
 }
 const heatmapDataPreProcess = (data, country, num) => {
-    console.log(country)
+    // console.log(country)
     // get data and time
     data.map(d => {d.date = d.EventTime.substr(8,2), d.time = d.EventTime.substr(11,2)});
     var countryData = dataProcessHelper(data, country, num)
@@ -213,7 +213,7 @@ const barDataPreProcess = (data, country, num) => {
     xData.sort()
     groupByTime.sort()
     // console.log(yData)
-    console.log(groupByTime)
+    // console.log(groupByTime)
     return [xData, yData, groupByTime]
 }
 // filter data based on country
@@ -240,7 +240,7 @@ const groupDataByDate = (data) => {
 // calculate the sum alert in each hour
 const heatmapGroupDataByDateHour = (data) => {
     // https://stackoverflow.com/questions/64159357/sum-array-objects-by-multiple-keys
-    console.log(typeof data)
+    // console.log(typeof data)
     keys = ['date', 'time'],
     result = Object.values(data.reduce((r, o) => {
                 const key = keys.map(k => o[k]).join('|');
@@ -250,7 +250,7 @@ const heatmapGroupDataByDateHour = (data) => {
                 r[key].value += parseInt(o.ConnCount);
                 return r;
             }, {}));
-    console.log(result)
+    // console.log(result)
     return result
 }
 const colorRange = (country) => {
