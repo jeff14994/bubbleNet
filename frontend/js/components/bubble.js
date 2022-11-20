@@ -105,10 +105,18 @@ const bubble = (data, svg, projection, startDate, endDate) => {
         })
         .on('click', (d,i) => {
             if (d3.select(d.currentTarget).classed('selected')) {
+                // unselect country and send event to other components
+                globalProxy.country = '';
+                globalProxy.date = '';
                 d3.select(d.currentTarget).classed('selected', false);
                 d3.selectAll('.target-line').remove();
-                d3.selectAll('.bubble, .bubble-country').attr('opacity', '1');
+                d3.selectAll('.bubble, .bubble-country')
+                    .attr('opacity', '1')
+                    .attr('stroke-width', '1px');
             } else {
+                // select country and send event to other components
+                globalProxy.country = d3.select(d.currentTarget).attr('id');
+                globalProxy.date = new Date(endDate).toDateString('en-US');
                 d3.select(d.currentTarget).classed('selected', true);
                 svg.selectAll('.target-line')
                     .data(i.target).enter()
@@ -118,10 +126,17 @@ const bubble = (data, svg, projection, startDate, endDate) => {
                     .attr('stroke', '#000000')
                     .attr('stroke-width', '1px')
                     .attr('fill', 'none');
-                d3.selectAll('.bubble, .bubble-country').attr('opacity', '0.3');
-                d3.selectAll(`#${d3.select(d.currentTarget).attr('id')}`).attr('opacity', '1').raise();
+                d3.selectAll('.bubble, .bubble-country')
+                    .attr('opacity', '0.3');
+                d3.selectAll(`#${d3.select(d.currentTarget).attr('id')}`)
+                    .attr('opacity', '1')
+                    .attr('stroke-width', '3px')
+                    .raise();
                 i.target.map(v => {
-                    d3.selectAll(`#${v}`).attr('opacity', '1').raise();
+                    d3.selectAll(`#${v}`)
+                        .attr('opacity', '1')
+                        .attr('stroke-width', '3px')
+                        .raise();
                 });
             }
         });
