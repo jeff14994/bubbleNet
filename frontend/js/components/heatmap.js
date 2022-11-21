@@ -256,9 +256,9 @@ const heatmapGroupDataByDateHour = (data) => {
 const colorRange = (country) => {
     var range;
     if (country) {
-        range = 500
+        range = 15000
         return range
     }
-    range = 15000
+    range = 16000
     return range
 }
