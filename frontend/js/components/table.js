@@ -6,19 +6,43 @@
  */
 
 
-function initTable(data, country,date) {
+function initTable(data, country, date) {
 
-    let table = document.querySelector("#table1 table");
+	var data_detail = data[country].date[date].detail;
+	//console.log(data);
 
-    let tabelHTML = "<thead>  <tr>  <th>ConnCount</th> <th>ID</th> <th>Category</th> <th>Protocol Type</th> </tr> </thead> <tbody>";
+	function tabulate(data, columns) {
+		var table = d3.select('#table1').append('table')
+		var thead = table.append('thead')
+		var tbody = table.append('tbody');
 
-    for (let i = 0; i < data[country].date[date].numberOfAlerts; i++) {
-        tabelHTML += '<tr>  <td>' + data[country].date[date].detail[i].ConnCount +
-            '</td> <td>' + data[country].date[date].detail[i].ID +
-            '</td> <td>' + data[country].date[date].detail[i].Category +
-            '</td> <td>' + data[country].date[date].detail[i].ProtocolType + '</td> </tr>';
-    }
-    tabelHTML += "</tbody>";
+		// append the header row
+		thead.append('tr')
+			.selectAll('th')
+			.data(columns).enter()
+			.append('th')
+			.text(function (column) { return column; });
 
-    table.innerHTML = tabelHTML;
+		// create a row for each object in the data
+		var rows = tbody.selectAll('tr')
+			.data(data)
+			.enter()
+			.append('tr');
+
+		// create a cell in each row for each column
+		var cells = rows.selectAll('td')
+			.data(function (row) {
+				return columns.map(function (column) {
+					return { column: column, value: row[column] };
+				});
+			})
+			.enter()
+			.append('td')
+			.text(function (d) { return d.value; });
+
+		return table;
+	}
+
+	// render the tables
+	tabulate(data_detail, ['ConnCount', 'ID', 'Category', 'ProtocolType'])
 }

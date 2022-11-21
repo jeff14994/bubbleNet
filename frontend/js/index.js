@@ -25,7 +25,7 @@ const proxyHandler = {
       }
       else if (prop === "date") {
         updateBulletDate(target);
-        bubble(data, svg, projection, target['date'], target['date']);
+          bubble(data, svg, projection, target['date'], target['date']);
       }
     }
 }
@@ -48,7 +48,10 @@ document.addEventListener('DOMContentLoaded', function () {
         // TODO(Zain Jakwani): please see issue list(https://docs.google.com/document/d/1aUH-5f93TWAcMBsvGlnlNqm7SvuLBR-ap1dL5g7qKEI/edit)
         bullet(data);
         // TODO(Jiahui Gao): please see issue list(https://docs.google.com/document/d/1aUH-5f93TWAcMBsvGlnlNqm7SvuLBR-ap1dL5g7qKEI/edit)
-        // initTable(data, country);
+        //let date = "Sun Mar 10 2019";
+        //TODO: initButton    
+        let init_country = "US";
+        initTable(data, init_country, globalData.date);
     });
 });
 
