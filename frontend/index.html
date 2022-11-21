@@ -84,18 +84,35 @@
                 top: 50%;
                 left: 50%;
             }
+            .button {
+                border: none;
+                color: white;
+                padding: 15px 32px;
+                text-align: center;
+                text-decoration: none;
+                display: inline-block;
+                font-size: 16px;
+            }
+
+            #button {
+                position: absolute;
+                top: 950px;
+                left: 200px;
+            }
         </style>
     </head>
     <body>
         <div class="title">
-            <h3>BubbleNet: A Cyber Security Dashboard for Visualizing Patterns</h1>
+            <h1>BubbleNet: A Cyber Security Dashboard for Visualizing Patterns</h1>
         </div>
         <div class="main-container">
             <div class="data-div">
                 <div class="data-div" id="heatmap_barchart"></div>
                 <div class="data-viz" id="heatmap"></div>
             </div>
-           
+            <div class="button" id="button" onclick="Table();">
+                <button>Alerts</button>
+            </div>
             <div class="content">
                 <div class="top-bar">
                     <div class="data-viz" id="time-alert">

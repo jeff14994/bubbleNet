@@ -6,7 +6,7 @@ var data, svg, projection;
 // Global variable used to implement selections across components
 // Initialize to default value
 var globalData = {
-    country: '',
+    country: 'US',
     date: new Date('2019-03-10 00:00').toDateString('en-US'),
 }
 
@@ -47,11 +47,6 @@ document.addEventListener('DOMContentLoaded', function () {
         heatmap(values[0], globalData.country, countryNum);
         // TODO(Zain Jakwani): please see issue list(https://docs.google.com/document/d/1aUH-5f93TWAcMBsvGlnlNqm7SvuLBR-ap1dL5g7qKEI/edit)
         bullet(data);
-        // TODO(Jiahui Gao): please see issue list(https://docs.google.com/document/d/1aUH-5f93TWAcMBsvGlnlNqm7SvuLBR-ap1dL5g7qKEI/edit)
-        //let date = "Sun Mar 10 2019";
-        //TODO: initButton    
-        let init_country = "US";
-        initTable(data, init_country, globalData.date);
     });
 });
 

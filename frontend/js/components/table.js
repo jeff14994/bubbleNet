@@ -5,6 +5,9 @@
  *  ASUID: 1221030200
  */
 
+function Table() {
+	initTable(data, globalData.country, globalData.date);
+}
 
 function initTable(data, country, date) {
 
