@@ -4,10 +4,10 @@
 var data, svg, projection;
 
 // Global variable used to implement selections across components
-// Always initialized to null values
+// Initialize to default value
 var globalData = {
-    country: null,
-    date: null,
+    country: '',
+    date: new Date('2019-03-10 00:00').toDateString('en-US'),
 }
 
 // Proxy acts as an Event Handler to update components on change
@@ -25,6 +25,7 @@ const proxyHandler = {
       }
       else if (prop === "date") {
         updateBulletDate(target);
+        bubble(data, svg, projection, target['date'], target['date']);
       }
     }
 }
@@ -36,17 +37,18 @@ document.addEventListener('DOMContentLoaded', function () {
         init();
         data = preProcess(values[0]);
         showSpinner(false);
-        bubble(data, svg, projection, '2019-03-10 00:00', '2019-03-10 00:00'); // render bubbles in map
+        bubble(data, svg, projection, globalData.date);
+        // TODO(Anrui Xiao): please see issue list(https://docs.google.com/document/d/1aUH-5f93TWAcMBsvGlnlNqm7SvuLBR-ap1dL5g7qKEI/edit)
         time_alert(data,"","");//data seg, current selected country, date
-        // set initial country to null
-        var country = country || '';
         // default: set the amount of data to be displayed by countryNum
         //! Caution: If you want to increase the countryNum, remember
         //! to change the color scale in the function heatmap
         const countryNum = 50000;
-        heatmap(values[0], country, countryNum);
+        heatmap(values[0], globalData.country, countryNum);
+        // TODO(Zain Jakwani): please see issue list(https://docs.google.com/document/d/1aUH-5f93TWAcMBsvGlnlNqm7SvuLBR-ap1dL5g7qKEI/edit)
         bullet(data);
-        initTable(data, country);
+        // TODO(Jiahui Gao): please see issue list(https://docs.google.com/document/d/1aUH-5f93TWAcMBsvGlnlNqm7SvuLBR-ap1dL5g7qKEI/edit)
+        // initTable(data, country);
     });
 });
 
