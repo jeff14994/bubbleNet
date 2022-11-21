@@ -5,12 +5,12 @@
  *  ASUID: 1219439611
  */
 const heatmap = (data, country, num)  => {
-    console.log("Loading heatmap");
+    // console.log("Loading heatmap");
     country = country || "";
     range = colorRange(country)
     // console.log(data)
     let preProcessData = heatmapDataPreProcess(data, country, num)
-    console.log("Loading sub bar chart")
+    // console.log("Loading sub bar chart")
     barChart(data, country, num)
     const xData = preProcessData[0]
     const yData = preProcessData[1]
