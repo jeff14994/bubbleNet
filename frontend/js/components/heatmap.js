@@ -120,7 +120,7 @@ const barChart = (data, country) => {
     yData = preProcessData[1] 
     barData = preProcessData[2]
     // var length = 1
-    var length = (Math.random() * 10)
+    var length = Math.floor(Math.random() * 3) + 2
     d3.select('#heatmap_barchart svg').remove();
     // set width and height
     const width = 300
