@@ -5,12 +5,12 @@
  *  ASUID: 1219439611
  */
 const heatmap = (data, country, num)  => {
-    console.log("Loading heatmap");
+    // console.log("Loading heatmap");
     country = country || "";
     range = colorRange(country)
     // console.log(data)
     let preProcessData = heatmapDataPreProcess(data, country, num)
-    console.log("Loading sub bar chart")
+    // console.log("Loading sub bar chart")
     barChart(data, country, num)
     const xData = preProcessData[0]
     const yData = preProcessData[1]
@@ -191,7 +191,7 @@ const barChart = (data, country) => {
                 
 }
 const heatmapDataPreProcess = (data, country, num) => {
-    console.log(country)
+    // console.log(country)
     // get data and time
     data.map(d => {d.date = d.EventTime.substr(8,2), d.time = d.EventTime.substr(11,2)});
     var countryData = dataProcessHelper(data, country, num)
@@ -213,7 +213,7 @@ const barDataPreProcess = (data, country, num) => {
     xData.sort()
     groupByTime.sort()
     // console.log(yData)
-    console.log(groupByTime)
+    // console.log(groupByTime)
     return [xData, yData, groupByTime]
 }
 // filter data based on country
@@ -240,7 +240,7 @@ const groupDataByDate = (data) => {
 // calculate the sum alert in each hour
 const heatmapGroupDataByDateHour = (data) => {
     // https://stackoverflow.com/questions/64159357/sum-array-objects-by-multiple-keys
-    console.log(typeof data)
+    // console.log(typeof data)
     keys = ['date', 'time'],
     result = Object.values(data.reduce((r, o) => {
                 const key = keys.map(k => o[k]).join('|');
@@ -250,7 +250,7 @@ const heatmapGroupDataByDateHour = (data) => {
                 r[key].value += parseInt(o.ConnCount);
                 return r;
             }, {}));
-    console.log(result)
+    // console.log(result)
     return result
 }
 const colorRange = (country) => {
