@@ -32,7 +32,7 @@ const bubble = (data, svg, projection, selectedDate) => {
 
     const size = d3.scaleOrdinal()
                         .domain(['level-1', 'level-2', 'level-3', 'level-4', 'level-5', 'level-6'])
-                        .range([8, 16, 24, 32, 48, 64]);
+                        .range([10, 20, 30, 40, 50, 60]);
 
     const getCountryNames = new Intl.DisplayNames(['en'], {type: 'region'});
 
@@ -66,11 +66,13 @@ const bubble = (data, svg, projection, selectedDate) => {
     const updateData = (formattedData) => {
         d3.selectAll('.bubble').remove();
         d3.selectAll('.bubble-country').remove();
-        const simulation = d3.forceSimulation()
-            .force("charge", d3.forceManyBody().strength(-1))
-            // .force("collide", d3.forceCollide(9))
+        const simulation = d3.forceSimulation(formattedData)
+            .force('x', d3.forceX(d => projection([countryGeo[d.sourceCountry]['Longitude (average)'], countryGeo[d.sourceCountry]['Latitude (average)']])[0]).strength(0.03))
+            .force('y', d3.forceY(d => projection([countryGeo[d.sourceCountry]['Longitude (average)'], countryGeo[d.sourceCountry]['Latitude (average)']])[1]).strength(0.03))
+            .force('charge', d3.forceManyBody().strength(-1))
+            .force('collide', d3.forceCollide().radius(d => size(level(d.numberOfAlerts)) + 2).strength(1))
             .force('center', d3.forceCenter(width / 1.8, height / 2.4));    
- 
+        
 
         const node = svg.selectAll('.bubble').data(formattedData.filter(d => d.numberOfAlerts > 0)).enter().append('circle')
             .attr('class', 'bubble')
@@ -116,14 +118,14 @@ const bubble = (data, svg, projection, selectedDate) => {
             .style('font-family', 'arial')
             .style('font-size', '12px');
     
-        simulation.nodes(formattedData.filter(d => d.numberOfAlerts > 0)).on("tick", () => {
+        simulation.nodes(formattedData.filter(d => d.numberOfAlerts > 0)).on('tick', () => {
             node
                 .attr('cx', d => d.x)
                 .attr('cy', d => d.y);
             title
                 .attr('x', d => d.x)
                 .attr('y', d => d.y + 5);
-        }).alphaDecay(0.02);
+        });
     }
     updateData(formattedData);
 
