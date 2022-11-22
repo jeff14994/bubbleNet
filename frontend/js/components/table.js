@@ -4,9 +4,15 @@
  *  Email: jgao76@asu.edu
  *  ASUID: 1221030200
  */
+let flag = false;
 
-function Table() {
-	initTable(data, globalData.country, globalData.date);
+function toggleTable() {
+	flag = !flag;
+	if (flag) {
+		initTable(data, globalData.country, globalData.date);
+	} else {
+	 	d3.select('#table1').selectAll("*").remove();
+	}
 }
 
 function initTable(data, country, date) {

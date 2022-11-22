@@ -24,7 +24,7 @@
             .top-bar {
                 display: flex;
                 flex-direction: row;
-                justify-content: space-between;
+                justify-content: flex-start;
             }
             .data-viz {
                 display: flex;
@@ -59,17 +59,16 @@
                 height: 150px;
             }
 
-                .table thead th {
-                    position: sticky;
-                    top: 0;
-                }
+            .table thead th {
+                position: sticky;
+                top: 0;
+            }
 
             table {
                 border-collapse: collapse;
-                width: 2000px;
+                width: 100%;
             }
 
-            th,
             td {
                 padding: 5px 10px;
                 border: 0px;
@@ -94,7 +93,7 @@
                 font-size: 16px;
             }
 
-            #button {
+            #alertBtn {
                 position: absolute;
                 top: 950px;
                 left: 200px;
@@ -110,7 +109,7 @@
                 <div class="data-div" id="heatmap_barchart"></div>
                 <div class="data-viz" id="heatmap"></div>
             </div>
-            <div class="button" id="button" onclick="Table();">
+            <div class="button" id="alertBtn" onclick="toggleTable();">
                 <button>Alerts</button>
             </div>
             <div class="content">
