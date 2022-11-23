@@ -4,6 +4,13 @@
  *  Email: yhung17@asu.edu
  *  ASUID: 1219439611
  */
+
+/**
+ * @param {*} data 
+ * @param {string} country 
+ * @param {number} num Default: set the amount of data to be displayed by countryNum; 
+ *                Caution: If you want to increase the countryNum, remember to change the color scale in the function heatmap
+ */
 const heatmap = (data, country, num)  => {
     // console.log("Loading heatmap");
     country = country || "";

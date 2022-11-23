@@ -22,7 +22,6 @@ const proxyHandler = {
         target[prop] = value;
 
         // ** update the components here **
-
         if (prop === "country") {
             updateBulletCountry(target);
             time_alert(data, target["country"], target["date"]);
@@ -49,14 +48,8 @@ document.addEventListener('DOMContentLoaded', function () {
         heatmapData = values[0];
         showSpinner(false);
         bubble(data, svg, projection, globalData.date);
-        time_alert(data,"whole world","Sun Mar 10 2019");//data seg, current selected country, date
-        //change to:   time_alert(data,"whole world","Sun Mar 10 2019","","",""); as default
-	    
-        // default: set the amount of data to be displayed by countryNum
-        //! Caution: If you want to increase the countryNum, remember
-        //! to change the color scale in the function heatmap
-        const countryNum = 50000;
-        heatmap(heatmapData, globalData.country, countryNum);
+        time_alert(data,"whole world","Sun Mar 10 2019");
+        heatmap(heatmapData, globalData.country, 50000);
         bullet(data);
     });
 });
