@@ -101,9 +101,11 @@
     const margin_time = { top:10, bottom:10, right:10, left:10 };
     const innerWidth_time = width - margin_time.left - margin_time.right;
     const innerHeight_time = height - margin_time.top - margin_time.bottom;
+    
     g_time = svg_time.append('g').attr('transform',`translate(${margin_time.left},${margin_time.top})`);
     g_time.remove();
     g_time = svg_time.append('g').attr('transform',`translate(${margin_time.left},${margin_time.top})`);
+
 
    //  console.log("draw_timer");
 
@@ -226,19 +228,27 @@
             .append('rect')
             .attr("class", "alert_bar");
 
+   // Resolved incorrect animation for alert bar view (by Yu-Chuan, Hung)
+   // 1. Comment out wrong code
+   // 2. Fix animation for alert bar view
    //draw inner bar when triggered: when selected a country thru bubble 
-   alert_bar.attr("x",  xScale(0))
+   console.log("num_of_alerts: " + num_of_alerts);
+   alert_bar.attr("x",  100)
             .attr("y", 60)
-            .attr("width", 0)
-            .transition()
-            .ease(d3.easeLinear)
-            .duration(400)
-            .delay(function (d, i) {
-            return i * 50;
-                                })
-            .attr('width',  xScale(num_of_alerts)-100)
+            // .transition()
+            .attr('width',  10)
             .attr("height", 10)
             .attr("fill", "Gray");
+   //draw inner bar when triggered: when selected a country thru bubble 
+   alert_bar
+            .transition()
+            .duration(400)
+            .ease(d3.easeLinear)
+            .attr("x", 100)
+            .attr('width',  xScale(num_of_alerts)-100)
+            .attr("height", 10)
+            .delay(function (d, i) {
+            return i * 50;})
 
    bar_frame.on("mouseover", function(e, d){
                bar_frame.attr("stroke","DimGray")
@@ -375,6 +385,8 @@
 
  const draw_default_alert = (num_of_alerts) => {
     d3.select("#alert_svg").select(".domain").remove();
+    d3.selectAll('#alert_svg g').remove()
+    d3.selectAll('.tooltip_t_a').remove()
     d3.selectAll(".axis_t_a").remove();
    //  console.log("draw_alert");
     svg_alert = d3.select('#alert_svg');
