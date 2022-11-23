@@ -78,7 +78,7 @@ const heatmap = (data, country, num)  => {
             // reuse the tooltip style from bubble.js and modify the border radius
             .attr('width', 120)
             .attr('height', 80)
-            .style('margin', '6px')
+            .style('padding', '6px')
             .style('align-items', 'center')
             .style('font', '14px arial')
             .style('color', '#FFFFFF')
@@ -137,14 +137,12 @@ const barChart = (data, country) => {
                         .range([margin*2, width - margin/2 + 45])
                         .padding(0.2)
     // set y scale
-    const yScale = d3.scaleLinear()
-                        .domain([0, d3.max(yData)])
+    const yScale = d3.scaleLog()
+                        .domain([1, d3.max(yData)])
                         .range([height - margin, margin]) 
-                        .nice() 
     // set y axis
     const yAxis = d3.axisLeft(yScale)
                         .ticks(5)
-                        .tickSize(3)
     const yAxisGroup = svg.append("g")
                             .call(yAxis)
                             .style("font-size", 8)
@@ -163,30 +161,65 @@ const barChart = (data, country) => {
                     })
                     .attr("fill", "#D3D3D3")
                     .attr('cursor', 'pointer')
-                    .on("click", (_,i) => mouseClick(i));
-    var country = true
-    if (country) {
-        // d3.select('.singleCountry').remove();
-        // draw bar chart
-        const barCountry = svg.selectAll("rectSingleCountry")
-                                .data(barData)
-                                .join("rect")
-                                .attr("class", "singleCountry")
-                                // -40 is to make the bar chart align with the heatmap
-                                // +7 is to make the bar chart align with the class allAlerts bar chart
-                                .attr("x", d => xScale(d.key) - 40 + 7) 
-                                .attr("y", d => yScale(d.value/length))
-                                .attr("width", xScale.bandwidth() - 15)
-                                .attr("height", d => {
-                                    return height - margin - yScale((d.value)/length)
-                                })
-                                .attr("fill", "#808080")
-                                // .attr("fill", "#000000")
-                                .attr('cursor', 'pointer');
-    }
+                    // Add hover effect on bar (by Yu-Hsien Tu)
+                    .on('mouseover', (d, i) => {
+                        let hasSelected = d3.selectAll('.allAlerts').nodes().map(v => d3.select(v).classed('selected')).filter(v => v&&v);
+                        if (hasSelected.length === 0) {
+                            globalProxy.date = new Date(`2019-03-${i.key} 00:00`).toDateString('en-US');
+                            d3.select(d.currentTarget)
+                                .attr('stroke', 'DimGray');
+                        }
+                    })
+                    .on('mouseout', (d) => {
+                        let hasSelected = d3.selectAll('.allAlerts').nodes().map(v => d3.select(v).classed('selected')).filter(v => v&&v);
+                        if (hasSelected.length === 0) {
+                            d3.select(d.currentTarget)
+                                .attr('stroke', 'none');
+                        }
+                    })
+                    .on("click", (d, i) => mouseClick(d, i));
+        // // var country = true
+        // if (country !== '') {
+        //     // d3.select('.singleCountry').remove();
+        //     // draw bar chart
+        //     allCountryData = barDataPreProcess(data, country);
+        // const barCountry = svg.selectAll("rectSingleCountry")
+        //                         .data(allCountryData)
+        //                         .enter()
+        //                         .append("rect")
+        //                         .attr("class", "singleCountry")
+        //                         // -40 is to make the bar chart align with the heatmap
+        //                         // +7 is to make the bar chart align with the class allAlerts bar chart
+        //                         .attr("x", d => xScale(d.key) - 40 + 7) 
+        //                         .attr("y", d => yScale(d.value/length))
+        //                         .attr("width", xScale.bandwidth() - 15)
+        //                         .attr("height", d => {
+        //                             return height - margin - yScale((d.value)/length)
+        //                         })
+        //                         .attr("fill", "#808080")
+        //                         // .attr("fill", "#000000")
+        //                         .attr('cursor', 'pointer');
+        // }
+    // Add click event for the bar chart above heatmap (by Yu-Hsien Tu)
     // Callback function for mouse click
-    function mouseClick(d) {
-        globalProxy.date = new Date(`2019-03-${d.key} 00:00`).toDateString('en-US');
+    function mouseClick(d, i) {
+        let hasSelected = d3.selectAll('.allAlerts').nodes().map(v => d3.select(v).classed('selected')).filter(v => v&&v);
+        if (hasSelected.length === 0 || d3.select(d.currentTarget).classed('selected')) {
+            if (!d3.select(d.currentTarget).classed('selected')) {
+                // click to select
+                d3.select(d.currentTarget).classed('selected', true);
+                d3.select(d.currentTarget)
+                    .attr('stroke-width', '3px')
+                    .attr('stroke', 'DimGray');
+                globalProxy.date = new Date(`2019-03-${i.key} 00:00`).toDateString('en-US');
+            } else {
+                // click to unselect
+                d3.select(d.currentTarget).classed('selected', false);
+                d3.select(d.currentTarget)
+                    .attr('stroke-width', '1px')
+                    .attr('stroke', 'none');
+            }
+        }
     }
                 
 }
@@ -261,4 +294,60 @@ const colorRange = (country) => {
     }
     range = 16000
     return range
+}
+
+// Add hover/ select effect and resolved incorrect render for single country view (by Yu-Hsien Tu)
+// 1. Comment out wrong condition
+// 2. Add 2 public functions and call these two in index.js
+
+
+/**
+ * Public function for updating inner bar in heatmap bar chart.
+ * @param {*} data 
+ * @param {string} country 
+ */
+const updateHeatmapBarChart = (data, country) => {
+    const barData = barDataPreProcess(data, country, 50000)[2];
+    const allCountryData = barDataPreProcess(data, '', 50000);
+    const svg = d3.select("#heatmap_barchart svg");
+    const width = 300
+    const height = width * 0.5
+    const margin = 40;
+    // set x scale
+    const xScale = d3.scaleBand()
+                        .domain(allCountryData[0])
+                        // set the show range of x bar
+                        .range([margin*2, width - margin/2 + 45])
+                        .padding(0.2)
+    // set y scale
+    const yScale = d3.scaleLog()
+                        .domain([1, d3.max(allCountryData[1])])
+                        .range([height - margin, margin])
+                    
+    d3.selectAll('.singleCountry').remove();
+    svg.selectAll('.singleCountry')
+        .data(barData)
+        .enter()
+        .append("rect")
+        .attr("class", "singleCountry")
+        // -40 is to make the bar chart align with the heatmap
+        // +7 is to make the bar chart align with the class allAlerts bar chart
+        .attr("x", d => xScale(d.key) - 40 + 7) 
+        .attr("y", d => yScale(d.value))
+        .attr("width", xScale.bandwidth() - 15)
+        .attr("height", d => {
+            return height - margin - yScale(d.value)
+        })
+        .attr("fill", "#808080")
+        // .attr("fill", "#000000")
+        .attr('cursor', 'pointer')
+        .raise();
+}
+
+
+/**
+ * Function to clean up last render view of singleCountry.
+ */
+const cleanUpHeatmapBarChart = () => {
+    d3.selectAll('.singleCountry').remove();
 }

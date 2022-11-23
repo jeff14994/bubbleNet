@@ -1,8 +1,11 @@
 /**
  *  Main JS file to include all components
  */
-var data, svg, projection;
 
+// Global variables
+var data, svg, projection;
+var heatmapData;
+var showTable = false;
 // Global variable used to implement selections across components
 // Initialize to default value
 var globalData = {
@@ -23,12 +26,16 @@ const proxyHandler = {
         if (prop === "country") {
             updateBulletCountry(target);
             time_alert(data, target["country"], target["date"]);
+            if (target['country'] !== '') {
+                updateHeatmapBarChart(heatmapData, target['country']);
+            } else {
+                cleanUpHeatmapBarChart();
+            }
         }
         else if (prop === "date") {
             updateBulletDate(target);
             bubble(data, svg, projection, target['date'], target['date']);
             time_alert(data, target["country"], target["date"]);
-            
         }
     }
 }
@@ -39,6 +46,7 @@ document.addEventListener('DOMContentLoaded', function () {
     Promise.all([d3.csv('../data/data.csv')]).then(function (values) {
         init();
         data = preProcess(values[0]);
+        heatmapData = values[0];
         showSpinner(false);
         bubble(data, svg, projection, globalData.date);
         // TODO(Anrui Xiao): please see issue list(https://docs.google.com/document/d/1aUH-5f93TWAcMBsvGlnlNqm7SvuLBR-ap1dL5g7qKEI/edit)
@@ -47,8 +55,7 @@ document.addEventListener('DOMContentLoaded', function () {
         //! Caution: If you want to increase the countryNum, remember
         //! to change the color scale in the function heatmap
         const countryNum = 50000;
-        heatmap(values[0], globalData.country, countryNum);
-        // TODO(Zain Jakwani): please see issue list(https://docs.google.com/document/d/1aUH-5f93TWAcMBsvGlnlNqm7SvuLBR-ap1dL5g7qKEI/edit)
+        heatmap(heatmapData, globalData.country, countryNum);
         bullet(data);
     });
 });
@@ -90,4 +97,17 @@ const init = () => {
 const showSpinner = (flag) => {
     const spinner = d3.select('#spinner');
     spinner.style('visibility', flag ? 'visible' : 'hidden');
+}
+
+
+/**
+ * Callback function for alert button.
+ */
+function toggleTable() {
+	showTable = !showTable;
+	if (showTable) {
+		initTable(data, globalData.country, globalData.date);
+	} else {
+	 	d3.select('#table1').selectAll("*").remove();
+	}
 }
