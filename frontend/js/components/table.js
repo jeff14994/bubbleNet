@@ -4,20 +4,16 @@
  *  Email: jgao76@asu.edu
  *  ASUID: 1221030200
  */
-let flag = false;
 
-function toggleTable() {
-	flag = !flag;
-	if (flag) {
-		initTable(data, globalData.country, globalData.date);
-	} else {
-	 	d3.select('#table1').selectAll("*").remove();
-	}
-}
+// Move callback function for alert button to index.js (by Yu-Hsien Tu)
 
 function initTable(data, country, date) {
-
-	var data_detail = data[country].date[date].detail;
+	if (country === '') {
+		alert('Please select a country!');
+		return 
+	} else {
+		var data_detail = data[country].date[date].detail;
+	}
 	//console.log(data);
 
 	function tabulate(data, columns) {
@@ -54,6 +50,12 @@ function initTable(data, country, date) {
 		return table;
 	}
 
+	// Add date and country in column (by Yu-Hsien Tu)
+	const getCountryNames = new Intl.DisplayNames(['en'], {type: 'region'});
+	data_detail.map(v => {
+		v.Date = date;
+		v.Country = getCountryNames.of(country);
+	});
 	// render the tables
-	tabulate(data_detail, ['ConnCount', 'ID', 'Category', 'ProtocolType'])
+	tabulate(data_detail, ['Date', 'Country', 'ConnCount', 'ID', 'Category', 'ProtocolType'])
 }

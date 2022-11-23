@@ -83,17 +83,13 @@
                 top: 50%;
                 left: 50%;
             }
-            .button {
-                border: none;
-                color: white;
-                padding: 15px 32px;
+            #alertBtn {
+                width: 80px;
                 text-align: center;
-                text-decoration: none;
                 display: inline-block;
                 font-size: 16px;
-            }
-
-            #alertBtn {
+                margin: 4px;
+                border-radius: 8px;
                 position: absolute;
                 top: 950px;
                 left: 200px;
@@ -109,9 +105,7 @@
                 <div class="data-div" id="heatmap_barchart"></div>
                 <div class="data-viz" id="heatmap"></div>
             </div>
-            <div class="button" id="alertBtn" onclick="toggleTable();">
-                <button>Alerts</button>
-            </div>
+            <button id="alertBtn" onclick="toggleTable();">Alerts</button>
             <div class="content">
                 <div class="top-bar">
                     <div class="data-viz" id="time-alert">
