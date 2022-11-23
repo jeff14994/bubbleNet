@@ -28,7 +28,7 @@ const bubble = (data, svg, projection, selectedDate) => {
     
     const color = d3.scaleOrdinal()
                         .domain(['level-1', 'level-2', 'level-3', 'level-4', 'level-5', 'level-6'])
-                        .range(['#48B0D4', '#92DCEB', '#FA011E', '#FEA85C', '#FFDF8C', '#FFFFBC']);
+                        .range(['#48B0D4', '#92DCEB', '#FFFFBC', '#FFDF8C', '#FEA85C', '#FA011E']);
 
     const size = d3.scaleOrdinal()
                         .domain(['level-1', 'level-2', 'level-3', 'level-4', 'level-5', 'level-6'])
@@ -46,6 +46,22 @@ const bubble = (data, svg, projection, selectedDate) => {
         } else if (value <= 12500) {
             return 'level-4';
         } else if (value <= 62500) {
+            return 'level-5';
+        } else {
+            return 'level-6';
+        }
+    }
+
+    const deviationLevel = (value) => {
+        if (value <= 10000) {
+            return 'level-1';
+        } else if (value <= 100000) {
+            return 'level-2';
+        } else if (value <= 1000000) {
+            return 'level-3';
+        } else if (value <= 10000000) {
+            return 'level-4';
+        } else if (value <= 100000000) {
             return 'level-5';
         } else {
             return 'level-6';
@@ -88,12 +104,14 @@ const bubble = (data, svg, projection, selectedDate) => {
     const width = +svg.style('width').replace('px','');
     const height = +svg.style('height').replace('px','');
 
+    var countOfNumberOfAttacks = 0
     formattedData.forEach(d => {
+        countOfNumberOfAttacks += d.numberOfAlerts;
         const pos = projection([countryGeo[d.sourceCountry]['Longitude (average)'], countryGeo[d.sourceCountry]['Latitude (average)']]);
         d.x = pos[0];
         d.y = pos[1];
     });
-
+    const mean = countOfNumberOfAttacks/ formattedData.length;
 
     const updateData = (formattedData) => {
         d3.selectAll('.bubble').remove();
@@ -106,14 +124,13 @@ const bubble = (data, svg, projection, selectedDate) => {
             .force('collide', d3.forceCollide().radius(d => size(level(d.numberOfAlerts)) + 2).strength(1))
             .force('center', d3.forceCenter(width / 1.8, height / 2.4));    
         
-
         const node = svg.selectAll('.bubble').data(formattedData.filter(d => d.numberOfAlerts > 0)).enter().append('circle')
             .attr('class', 'bubble')
             .attr('id', d => d.sourceCountry)
             .attr('r', d => size(level(d.numberOfAlerts)))
             .attr('stroke-width', '1px')
             .attr('stroke', '#000000')
-            .attr('fill', d => color(level(d.numberOfAlerts)))
+            .attr('fill', d => color(deviationLevel(Math.pow(parseFloat(d.numberOfAlerts)-mean,2))))
             .on('mouseover', (d,i) => {
                 globalProxy.country = i.sourceCountry;
                 div.transition()
