@@ -11,7 +11,7 @@ var margin = {top: 10, right: 10, bottom: 30, left: 30},
 width = 220 - margin.left - margin.right,
 height = 100 - margin.top - margin.bottom;
 
-var world_data1 = {"udp": 0, "tcp": 0}
+var world_data1 = {"udp": 0, "tcp": 0, "icmp": 0}
 var country_data1 = {}
 var world_days1 = {}
 var country_days1 = {}
@@ -51,44 +51,48 @@ const yClean2 = (x) => {
 const bullet = (data) => {
 
     // console.log(data)
-    // preprocessing 
+    // preprocessing
+    /**
+     * Fix missing protocol type. (by Yu-Hsien Tu)
+     * There is three types of protocol: udp, tcp, and icmp instead of two.
+     */
     for (const cn of Object.keys(data)) {
       for (const date of Object.keys(data[cn].date)) {
         for (const obj of data[cn].date[date].detail) {
-          if (obj["ProtocolType"] === "udp" || obj["ProtocolType"] === "tcp") {
-            world_data1[obj["ProtocolType"]] += 1
+          if (obj["ProtocolType"] === "udp" || obj["ProtocolType"] === "tcp" || obj["ProtocolType"] === "icmp") {
+            world_data1[obj["ProtocolType"]] += (1*obj['ConnCount'])
 
             if (!(date in world_days1)) {
-              world_days1[date] = {"udp": 0, "tcp": 0}
+              world_days1[date] = {"udp": 0, "tcp": 0, "icmp": 0};
             }
-            world_days1[date][obj["ProtocolType"]] += 1
+            world_days1[date][obj["ProtocolType"]] += (1*obj['ConnCount'])
 
             if (!(cn in country_data1)) {
-              country_data1[cn] = {"udp": 0, "tcp": 0}
+              country_data1[cn] = {"udp": 0, "tcp": 0, "icmp": 0};
             }
-            country_data1[cn][obj["ProtocolType"]] += 1
+            country_data1[cn][obj["ProtocolType"]] += (1*obj['ConnCount'])
 
             if (!(date in country_days1)) {
               country_days1[date] = {}
             }
             if (!(cn in country_days1[date])) {
-              country_days1[date][cn] = {"udp": 0, "tcp": 0}
+              country_days1[date][cn] = {"udp": 0, "tcp": 0, "icmp": 0};
             }
-            country_days1[date][cn][obj["ProtocolType"]] += 1
+            country_days1[date][cn][obj["ProtocolType"]] += (1*obj['ConnCount'])
           }
 
         if (obj["Category"] === "Recon.Scanning" || obj["Category"] === "Attempt.Login") {
-          world_data2[obj["Category"]] += 1
+          world_data2[obj["Category"]] += (1*obj['ConnCount'])
 
           if (!(date in world_days2)) {
             world_days2[date] = {"Recon.Scanning": 0, "Attempt.Login": 0}
           }
-          world_days2[date][obj["Category"]] += 1
+          world_days2[date][obj["Category"]] += (1*obj['ConnCount'])
 
           if (!(cn in country_data2)) {
             country_data2[cn] = {"Recon.Scanning": 0, "Attempt.Login": 0}
           }
-          country_data2[cn][obj["Category"]] += 1
+          country_data2[cn][obj["Category"]] += (1*obj['ConnCount'])
 
           if (!(date in country_days2)) {
             country_days2[date] = {}
@@ -96,19 +100,20 @@ const bullet = (data) => {
           if (!(cn in country_days2[date])) {
             country_days2[date][cn] = {"Recon.Scanning": 0, "Attempt.Login": 0}
           }
-          country_days2[date][cn][obj["Category"]] += 1
+          country_days2[date][cn][obj["Category"]] += (1*obj['ConnCount'])
         }
         }
       }
     }
 
-    max_val1 = Math.max(world_data1["udp"], world_data1["tcp"])
+    max_val1 = Math.max(world_data1["udp"], world_data1["tcp"], world_data1["icmp"])
     max_val2 = Math.max(world_data2["Recon.Scanning"], world_data2["Attempt.Login"])
 
 
     var bar_data1 = [
       { Label: "udp", Value: world_data1["udp"] },
       { Label: "tcp", Value: world_data1["tcp"] },
+      { Label: "icmp", Value: world_data1["icmp"] },
     ]
     var bar_data2 = [
       { Label: "Recon.Scanning", Value: world_data2["Recon.Scanning"] },
@@ -186,10 +191,11 @@ const bullet = (data) => {
         .call(d3.axisLeft(y2).ticks(4));
        
 
-    
+    // Please update the class when modifying others code.
+    // Rename class (by Yu-Hsien Tu)
     var tooltip = d3.select("body")
       .append("div")
-      .attr("class", "tooltip_heatmap")
+      .attr("class", "tooltip_bullet")
       .style("opacity", 0)
     var mouseover = function(d) {
       tooltip
@@ -294,6 +300,7 @@ const updateBulletCountry = (target) => {
     var line_data1 = [
       { Label: "udp", Value: country_data1[country]["udp"]},
       { Label: "tcp", Value: country_data1[country]["tcp"]},
+      { Label: "icmp", Value: country_data1[country]["icmp"]},
     ];
     var line_data2 = [
       { Label: "Recon.Scanning", Value: country_data2[country]["Recon.Scanning"]},
@@ -310,6 +317,7 @@ const updateBulletCountry = (target) => {
       bullet_data1 = [
         { Label: "udp", Value: country_days1[date][country]["udp"]},
         { Label: "tcp", Value: country_days1[date][country]["tcp"]},
+        { Label: "icmp", Value: country_days1[date][country]["icmp"]},
       ];
       bullet_data2 = [
         { Label: "Recon.Scanning", Value: country_days2[date][country]["Recon.Scanning"]},
@@ -318,11 +326,8 @@ const updateBulletCountry = (target) => {
     }
 
     if (existingBullet.empty()) {
-
-      var tooltip = d3.select("body")
-        .append("div")
-        .attr("class", "tooltip_heatmap")
-        .style("opacity", 0)
+      // Reuse the same div (by Yu-Hsien Tu)
+      var tooltip = d3.select('.tooltip_bullet');
       var mouseover = function(d) {
         tooltip
               .transition()
@@ -469,6 +474,7 @@ const updateBulletDate = (target) => {
     newBarData1 = [
       { Label: "udp", Value: world_days1[date]["udp"]},
       { Label: "tcp", Value: world_days1[date]["tcp"]},
+      { Label: "icmp", Value: world_days1[date]["icmp"]},
     ];
     newBarData2 = [
       { Label: "Recon.Scanning", Value: world_days2[date]["Recon.Scanning"]},
@@ -479,6 +485,7 @@ const updateBulletDate = (target) => {
       newBulletData1 = [
         { Label: "udp", Value: country_days1[date][country]["udp"]},
         { Label: "tcp", Value: country_days1[date][country]["tcp"]},
+        { Label: "icmp", Value: country_days1[date][country]["icmp"]},
       ];
       newBulletData2 = [
         { Label: "Recon.Scanning", Value: country_days2[date][country]["Recon.Scanning"]},
@@ -490,6 +497,7 @@ const updateBulletDate = (target) => {
     newBarData1 = [
       { Label: "udp", Value: world_data1["udp"] },
       { Label: "tcp", Value: world_data1["tcp"]},
+      { Label: "icmp", Value: world_data1["icmp"]},
     ];
     newBarData2 = [
       { Label: "Recon.Scanning", Value: world_data2["Recon.Scanning"] },
@@ -500,6 +508,7 @@ const updateBulletDate = (target) => {
       newBulletData1 = [
         { Label: "udp", Value: country_data1[country]["udp"]},
         { Label: "tcp", Value: country_data1[country]["tcp"]},
+        { Label: "icmp", Value: country_data1[country]["icmp"]},
       ];
       newBulletData2 = [
         { Label: "Recon.Scanning", Value: country_data2[country]["Recon.Scanning"]},
