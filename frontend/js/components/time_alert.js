@@ -228,19 +228,27 @@
             .append('rect')
             .attr("class", "alert_bar");
 
+   // Resolved incorrect animation for alert bar view (by Yu-Chuan, Hung)
+   // 1. Comment out wrong code
+   // 2. Fix animation for alert bar view
    //draw inner bar when triggered: when selected a country thru bubble 
-   alert_bar.attr("x",  xScale(0))
+   console.log("num_of_alerts: " + num_of_alerts);
+   alert_bar.attr("x",  100)
             .attr("y", 60)
-            .attr("width", 0)
-            .transition()
-            .ease(d3.easeLinear)
-            .duration(400)
-            .delay(function (d, i) {
-            return i * 50;
-                                })
-            .attr('width',  xScale(num_of_alerts)-100)
+            // .transition()
+            .attr('width',  10)
             .attr("height", 10)
             .attr("fill", "Gray");
+   //draw inner bar when triggered: when selected a country thru bubble 
+   alert_bar
+            .transition()
+            .duration(400)
+            .ease(d3.easeLinear)
+            .attr("x", 100)
+            .attr('width',  xScale(num_of_alerts)-100)
+            .attr("height", 10)
+            .delay(function (d, i) {
+            return i * 50;})
 
    bar_frame.on("mouseover", function(e, d){
                bar_frame.attr("stroke","DimGray")
