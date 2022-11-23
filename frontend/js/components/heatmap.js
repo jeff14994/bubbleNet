@@ -331,24 +331,28 @@ const updateHeatmapBarChart = (data, country) => {
                         .domain([1, d3.max(allCountryData[1])])
                         .range([height - margin, margin])
                     
-    d3.selectAll('.singleCountry').remove();
-    svg.selectAll('.singleCountry')
-        .data(barData)
-        .enter()
-        .append("rect")
-        .attr("class", "singleCountry")
-        // -40 is to make the bar chart align with the heatmap
-        // +7 is to make the bar chart align with the class allAlerts bar chart
-        .attr("x", d => xScale(d.key) - 40 + 7) 
-        .attr("y", d => yScale(d.value))
-        .attr("width", xScale.bandwidth() - 15)
-        .attr("height", d => {
-            return height - margin - yScale(d.value)
-        })
-        .attr("fill", "#808080")
-        // .attr("fill", "#000000")
-        .attr('cursor', 'pointer')
-        .raise();
+    svg.selectAll('.singleCountry').data(barData).join(
+        enter => enter.append("rect")
+                        .attr("class", "singleCountry")
+                        // -40 is to make the bar chart align with the heatmap
+                        // +7 is to make the bar chart align with the class allAlerts bar chart
+                        .attr("x", d => xScale(d.key) - 40 + 7)
+                        .attr("width", xScale.bandwidth() - 15)
+                        .attr("y", yScale(1))
+                        .attr("height", 0)
+                        .transition()
+                        .duration(2000)
+                        .attr("y", d => yScale(d.value))
+                        .attr("height", d => height - margin - yScale(d.value))
+                        .attr("fill", "#808080")
+                        .attr('cursor', 'pointer'),
+        update => update.attr("y", yScale(1))
+                        .attr("height", 0)
+                        .transition()
+                        .duration(2000)
+                        .attr("y", d => yScale(d.value))
+                        .attr("height", d => height - margin - yScale(d.value)),
+    );
 }
 
 
@@ -356,5 +360,10 @@ const updateHeatmapBarChart = (data, country) => {
  * Function to clean up last render view of singleCountry.
  */
 const cleanUpHeatmapBarChart = () => {
-    d3.selectAll('.singleCountry').remove();
+    d3.selectAll('.singleCountry')
+        .transition()
+        .duration(2000)
+        .attr("y", 110) // 110 is the min range in yScale
+        .attr("height", 0)
+        .remove();
 }
