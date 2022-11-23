@@ -62,6 +62,11 @@
       const ddt = draw_default_timer(pass_country, pass_date, alerts);
       g_alert.remove();
       const dda = draw_default_alert(alerts);
+      d3.select('.alert-bar')
+         .transition()
+         .duration(2000)
+         .attr('width', 0)
+         .remove();
     }
 
     //if it is not default:
@@ -107,8 +112,7 @@
     const innerWidth_time = width - margin_time.left - margin_time.right;
     const innerHeight_time = height - margin_time.top - margin_time.bottom;
     
-    g_time = svg_time.append('g').attr('transform',`translate(${margin_time.left},${margin_time.top})`);
-    g_time.remove();
+    svg_time.selectAll('g').remove();
     g_time = svg_time.append('g').attr('transform',`translate(${margin_time.left},${margin_time.top})`);
 
 
@@ -176,6 +180,7 @@
  }
 
  const draw_alert = (num_of_alerts) => {
+   const HOVER_PADDING = 10;
     d3.select("#alert_svg").select(".domain").remove();
     d3.selectAll(".axis_t_a").remove();
    //  console.log("draw_alert");
@@ -189,7 +194,6 @@
     const innerHeight_alert = height - margin_alert.top - margin_alert.bottom;
     g_alert = svg_alert.append('g').attr('transform',`translate(${margin_alert.left},${margin_alert.top})`);
     g_alert.selectAll(".axis").remove();
-    g_alert.selectAll().remove();
     g_alert = svg_alert.append('g').attr('transform',`translate(${margin_alert.left},${margin_alert.top})`);
 
     var div_t_a = d3.select("body").append("div")
@@ -204,8 +208,8 @@
     .attr("width",170)
     .attr("height", 19)
     .attr("fill","Gainsboro")
-    .attr("stroke","DimGray")
-    .attr("stroke-width", 2);
+    .attr("stroke","none")
+    .attr("stroke-width", '1px');
     //.attr("rx", 1); 
   
 
@@ -224,7 +228,7 @@
     g_alert.append('g')
             .attr('transform',`translate(0, ${innerHeight_alert-48})`)
             .attr("class","axis_t_a")
-            .transition().duration(2000)
+            .transition().duration(500)
             .call(x_axis);
  
 
@@ -237,58 +241,58 @@
    // 1. Comment out wrong code
    // 2. Fix animation for alert bar view
    //draw inner bar when triggered: when selected a country thru bubble 
-   console.log("num_of_alerts: " + num_of_alerts);
-   alert_bar.attr("x",  100)
+   // console.log("num_of_alerts: " + num_of_alerts);
+   alert_bar
+            .attr('class', 'alert-bar')
+            .attr("x", 100)
             .attr("y", 60)
-            // .transition()
             .attr('width',  10)
             .attr("height", 10)
             .attr("fill", "Gray");
    //draw inner bar when triggered: when selected a country thru bubble 
    alert_bar
             .transition()
-            .duration(400)
-            .ease(d3.easeLinear)
+            .duration(2000)
             .attr("x", 100)
             .attr('width',  xScale(num_of_alerts)-100)
-            .attr("height", 10)
-            .delay(function (d, i) {
-            return i * 50;})
+            .attr("height", 10);
+
 
    bar_frame.on("mouseover", function(e, d){
                bar_frame.attr("stroke","DimGray")
-               .attr("stroke-width", 2);
+               .attr("stroke-width", '1px');
                //.attr("rx", 1); 
 
                div_t_a.transition()
                .duration(500)
                .style("opacity", 1);
 
-               d3.select(this)
-               .style("stroke", "black")
-               .style("opacity", 1)
+               // d3.select(this)
+               // .style("stroke", "black")
+               // .style("opacity", 1)
                // console.log("mouseover");
 
                div_t_a.html(" "+num_of_alerts + " alerts ")
                 .attr('width', 120)
                 .attr('height', 80)
                 .style('display', 'block')
-                .style('margin', '8px')
+                .style('padding', '8px')
                 .style('align-items', 'center')
                 .style('position', 'absolute')
                 .style('font', '14px arial')
-                .style('color', 'red')
+                .style('color', '#FFFFFF')
                 .style('background','#000000')
                 .style('opacity', '0.8')
                 .style('border-radius', '8px')
                 .style('pointer-events', 'none')
-                .style('top', `${(e.pageY)}px`)
-                .style('left', `${(e.pageX)}px`);
+                .style('top', `${(e.pageY + HOVER_PADDING)}px`)
+                .style('left', `${(e.pageX + HOVER_PADDING)}px`);
             })
             .on("mousemove",function(e, d){
                // console.log("mousemove");
             })
             .on("mouseout", function(d) {
+               bar_frame.attr("stroke","none");
                div_t_a.transition()
                .duration(500)
                .style('opacity', 0);
@@ -397,13 +401,13 @@
     svg_alert = d3.select('#alert_svg');
     const width = +svg_alert.style('width').replace('px','');
     const height = +svg_alert.style('height').replace('px','');
-
+    const HOVER_PADDING = 10;
     const margin_alert = { top:10, bottom:10, right:10, left:10 };
     const innerWidth_alert = width - margin_alert.left - margin_alert.right;
     const innerHeight_alert = height - margin_alert.top - margin_alert.bottom;
-    g_alert = svg_alert.append('g').attr('transform',`translate(${margin_alert.left},${margin_alert.top})`);
+   //  g_alert = svg_alert.append('g').attr('transform',`translate(${margin_alert.left},${margin_alert.top})`);
     g_alert.selectAll(".axis").remove();
-    g_alert.selectAll().remove();
+   //  g_alert.selectAll().remove();
     g_alert = svg_alert.append('g').attr('transform',`translate(${margin_alert.left},${margin_alert.top})`);
 
     var div_t_a = d3.select("body").append("div")
@@ -418,8 +422,8 @@
     .attr("width",170)
     .attr("height", 19)
     .attr("fill","Gainsboro")
-    .attr("stroke","DimGray")
-    .attr("stroke-width", 2);
+    .attr("stroke","none")
+    .attr("stroke-width", '1px');
     //.attr("rx", 1); 
 
     let label_a_str = g_alert.append('text')
@@ -461,38 +465,39 @@
 
    bar_frame.on("mouseover", function(e, d){
                bar_frame.attr("stroke","DimGray")
-               .attr("stroke-width", 2);
+               .attr("stroke-width", '1px');
                //.attr("rx", 1); 
 
                div_t_a.transition()
                .duration(500)
                .style("opacity", 1);
 
-               d3.select(this)
-               .style("stroke", "black")
-               .style("opacity", 1)
+               // d3.select(this)
+               // .style("stroke", "black")
+               // .style("opacity", 1)
                // console.log("mouseover");
 
                div_t_a.html(" "+num_of_alerts + " alerts ")
                 .attr('width', 120)
                 .attr('height', 80)
                 .style('display', 'block')
-                .style('margin', '8px')
+                .style('padding', '8px')
                 .style('align-items', 'center')
                 .style('position', 'absolute')
                 .style('font', '14px arial')
-                .style('color', 'red')
+                .style('color', '#FFFFFF')
                 .style('background','#000000')
                 .style('opacity', '0.8')
                 .style('border-radius', '8px')
                 .style('pointer-events', 'none')
-                .style('top', `${(e.pageY)}px`)
-                .style('left', `${(e.pageX)}px`);
+                .style('top', `${(e.pageY + HOVER_PADDING)}px`)
+                .style('left', `${(e.pageX + HOVER_PADDING)}px`);
             })
             .on("mousemove",function(e, d){
                // console.log("mousemove");
             })
             .on("mouseout", function(d) {
+               bar_frame.attr("stroke","none")
                div_t_a.transition()
                .duration(500)
                .style('opacity', 0);
