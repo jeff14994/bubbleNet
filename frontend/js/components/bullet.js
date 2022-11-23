@@ -49,6 +49,7 @@ const yClean2 = (x) => {
  *  Bullet chart component.
  */
 const bullet = (data) => {
+    const HOVER_PADDING = 10;
 
     // console.log(data)
     // preprocessing
@@ -211,8 +212,8 @@ const bullet = (data) => {
             .html("Number of attacks: " + i.Value)
             .style("opacity", "1")
             .style("position", "absolute")
-            .style("left", (e.pageX) + "px")
-            .style("top", (e.pageY) + "px")
+            .style("left", (e.pageX + HOVER_PADDING) + "px")
+            .style("top", (e.pageY + HOVER_PADDING) + "px")
             .attr('width', 120)
             .attr('height', 80)
             .style('padding', "5px")
@@ -264,6 +265,8 @@ const bullet = (data) => {
 const updateBulletCountry = (target) => {
     const country = target.country;
     const date = target.date;
+
+    const HOVER_PADDING = 10;
 
     if (!country) {
       var bulletBars = d3.selectAll(".bulletBar");
@@ -342,8 +345,8 @@ const updateBulletCountry = (target) => {
               .html("Number of attacks: " + i.Value)
               .style("opacity", "1")
               .style("position", "absolute")
-              .style("left", (e.pageX) + "px")
-              .style("top", (e.pageY) + "px")
+              .style("left", (e.pageX + HOVER_PADDING) + "px")
+              .style("top", (e.pageY + HOVER_PADDING) + "px")
               .attr('width', 120)
               .attr('height', 80)
               .style('padding', "5px")

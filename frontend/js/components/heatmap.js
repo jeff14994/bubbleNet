@@ -17,7 +17,7 @@ const heatmap = (data, country, num)  => {
     data = preProcessData[2]
     // console.log(data.length)
     // console.log(data)
-
+    const HOVER_PADDING = 10;
     // setup dimensions and margins
     const margin = {top: 30, right: 25, bottom: 30, left: 36}
     const width = 250
@@ -73,8 +73,8 @@ const heatmap = (data, country, num)  => {
             .html("Number of alert: " + i.value)
             .style("opacity", "1")
             .style("position", "absolute")
-            .style("left", (e.pageX) + "px")
-            .style("top", (e.pageY) + "px")
+            .style("left", (e.pageX + HOVER_PADDING) + "px")
+            .style("top", (e.pageY + HOVER_PADDING) + "px")
             // reuse the tooltip style from bubble.js and modify the border radius
             .attr('width', 120)
             .attr('height', 80)
