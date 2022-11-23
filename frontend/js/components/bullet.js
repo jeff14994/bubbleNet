@@ -176,7 +176,7 @@ const bullet = (data) => {
         .style("font-size", "12px");
       svg1.append("g")
         .style("font", "4px")
-        .call(d3.axisLeft(y).ticks(4));
+        .call(d3.axisLeft(y).ticks(5));
 
       svg2.append("g")
       .attr("transform", "translate(0," + height + ")")
@@ -188,7 +188,7 @@ const bullet = (data) => {
         .style("font-size", "9px");
       svg2.append("g")
         .style("font", "3px")
-        .call(d3.axisLeft(y2).ticks(4));
+        .call(d3.axisLeft(y2).ticks(5));
        
 
     // Please update the class when modifying others code.
