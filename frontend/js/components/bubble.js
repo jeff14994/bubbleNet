@@ -115,8 +115,9 @@ const bubble = (data, svg, projection, selectedDate) => {
             .attr('stroke', '#000000')
             .attr('fill', d => color(level(d.numberOfAlerts)))
             .on('mouseover', (d,i) => {
+                globalProxy.country = i.sourceCountry;
                 div.transition()
-                    .duration(200)
+                    .duration(500)
                     .style('opacity', 1);
                 div.html(`${i.date} <br/>
                         00:00 - 23:59 <br/>
@@ -137,6 +138,7 @@ const bubble = (data, svg, projection, selectedDate) => {
                     .style('left', `${(d.pageX)}px`);
             })
             .on('mouseout', () => {
+                globalProxy.country = '';
                 div.transition()
                     .duration(500)
                     .style('opacity', 0);
