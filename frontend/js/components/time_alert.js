@@ -101,9 +101,11 @@
     const margin_time = { top:10, bottom:10, right:10, left:10 };
     const innerWidth_time = width - margin_time.left - margin_time.right;
     const innerHeight_time = height - margin_time.top - margin_time.bottom;
+    
     g_time = svg_time.append('g').attr('transform',`translate(${margin_time.left},${margin_time.top})`);
     g_time.remove();
     g_time = svg_time.append('g').attr('transform',`translate(${margin_time.left},${margin_time.top})`);
+
 
    //  console.log("draw_timer");
 
@@ -375,6 +377,8 @@
 
  const draw_default_alert = (num_of_alerts) => {
     d3.select("#alert_svg").select(".domain").remove();
+    d3.selectAll('#alert_svg g').remove()
+    d3.selectAll('.tooltip_t_a').remove()
     d3.selectAll(".axis_t_a").remove();
    //  console.log("draw_alert");
     svg_alert = d3.select('#alert_svg');
