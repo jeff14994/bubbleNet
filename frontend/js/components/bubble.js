@@ -52,6 +52,38 @@ const bubble = (data, svg, projection, selectedDate) => {
         }
     }
 
+    const scaleData = [
+        {v: 10, l: '10'},
+        {v: 20, l: '500'},
+        {v: 30, l: '2500'},
+        {v: 40, l: '12500'},
+        {v: 50, l: '62500'},
+        {v: 60, l: ''},
+    ];
+    
+    const SCALE_PADDING = 2;
+
+    svg.selectAll('.circle-scale').data(scaleData).enter()
+        .append('circle')
+        .attr('class', 'circle-scale')
+        .attr('r', d => d.v)
+        .attr('stroke-width', '1px')
+        .attr('stroke', 'DimGray')
+        .attr('fill', 'none')
+        .attr('cx', 100)
+        .attr('cy', 800);
+    
+    svg.selectAll('.circle-scale-label').data(scaleData).enter()
+        .append('text')
+        .attr('class', 'circle-scale-label')
+        .text(d => d.l)
+        .attr('x', 100)
+        .attr('y', d => 800 - d.v - SCALE_PADDING)
+        .attr('text-anchor','middle')
+        .style('font-family', 'arial')
+        .style('font-size', '9px');
+
+
     const formattedData = dateRangeFilter(data, selectedDate);
     const width = +svg.style('width').replace('px','');
     const height = +svg.style('height').replace('px','');
@@ -66,6 +98,7 @@ const bubble = (data, svg, projection, selectedDate) => {
     const updateData = (formattedData) => {
         d3.selectAll('.bubble').remove();
         d3.selectAll('.bubble-country').remove();
+        d3.selectAll('.target-line').remove();
         const simulation = d3.forceSimulation(formattedData)
             .force('x', d3.forceX(d => projection([countryGeo[d.sourceCountry]['Longitude (average)'], countryGeo[d.sourceCountry]['Latitude (average)']])[0]).strength(0.03))
             .force('y', d3.forceY(d => projection([countryGeo[d.sourceCountry]['Longitude (average)'], countryGeo[d.sourceCountry]['Latitude (average)']])[1]).strength(0.03))
@@ -130,38 +163,40 @@ const bubble = (data, svg, projection, selectedDate) => {
     updateData(formattedData);
 
     function onClick(d, i) {
-        if (d3.select(d.currentTarget).classed('selected')) {
-            // unselect country and send event to other components
-            globalProxy.country = '';
-            d3.select(d.currentTarget).classed('selected', false);
-            d3.selectAll('.target-line').remove();
-            d3.selectAll('.bubble, .bubble-country')
-                .attr('opacity', '1')
-                .attr('stroke-width', '1px');
-        } else {
-            // select country and send event to other components
-            globalProxy.country = d3.select(d.currentTarget).attr('id');
-            d3.select(d.currentTarget).classed('selected', true);
-            svg.selectAll('.target-line')
-                .data(i.target).enter()
-                .append('path')
-                .classed('target-line', true)
-                .attr('d', d => d3.line()([[i.x, i.y], [d3.select(`#${d}`).attr('cx'), d3.select(`#${d}`).attr('cy')]]))
-                .attr('stroke', '#000000')
-                .attr('stroke-width', '1px')
-                .attr('fill', 'none');
-            d3.selectAll('.bubble, .bubble-country')
-                .attr('opacity', '0.3');
-            d3.selectAll(`#${d3.select(d.currentTarget).attr('id')}`)
-                .attr('opacity', '1')
-                .attr('stroke-width', '3px')
-                .raise();
-            i.target.map(v => {
-                d3.selectAll(`#${v}`)
+        let hasSelected = d3.selectAll('.bubble').nodes().map(v => d3.select(v).classed('selected')).filter(v => v&&v);
+        if (hasSelected.length === 0 || d3.select(d.currentTarget).classed('selected')) {
+            if (d3.select(d.currentTarget).classed('selected')) {
+                // unselect country and send event to other components
+                globalProxy.country = '';
+                d3.select(d.currentTarget).classed('selected', false);
+                d3.selectAll('.target-line').remove();
+                d3.selectAll('.bubble, .bubble-country')
+                    .attr('opacity', '1')
+                    .attr('stroke-width', '1px');
+            } else {
+                // select country and send event to other components
+                globalProxy.country = d3.select(d.currentTarget).attr('id');
+                d3.select(d.currentTarget).classed('selected', true);
+                svg.selectAll('.target-line').data(i.target).enter()
+                    .append('path')
+                    .attr('class', 'target-line')
+                    .attr('d', d => d3.line()([[i.x, i.y], [d3.select(`#${d}`).attr('cx'), d3.select(`#${d}`).attr('cy')]]))
+                    .attr('stroke', '#000000')
+                    .attr('stroke-width', '1px')
+                    .attr('fill', 'none');
+                d3.selectAll('.bubble, .bubble-country')
+                    .attr('opacity', '0.3');
+                d3.selectAll(`#${d3.select(d.currentTarget).attr('id')}`)
                     .attr('opacity', '1')
                     .attr('stroke-width', '3px')
                     .raise();
-            });
+                i.target.map(v => {
+                    d3.selectAll(`#${v}`)
+                        .attr('opacity', '1')
+                        .attr('stroke-width', '3px')
+                        .raise();
+                });
+            }
         }
     }
 }
