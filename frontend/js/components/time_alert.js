@@ -6,10 +6,16 @@
  */
 
 
-/**
- * numberOfAlerts: number,   
- *      date: string,   
- *      sourceCountry: string,   
+/*
+        // with parameters: data, (string) country, (string) date, (string of single int) time, (string) category, (string) protocol type
+        //note that category and protocol type cannot be selected at the same time.
+        //examles: 
+        //time_alert(data,"whole world","Sun Mar 10 2019","17","Recon.Scanning",""): select heatmap and bullet 
+        //time_alert(data,"whole world","Sun Mar 10 2019","17","",""): select heatmap while global time changed
+        //time_alert(data,"whole world","Sun Mar 10 2019","","","tcp"): select bullet while global attribute changed
+        
+        //time_alert(data,"whole world","Sun Mar 10 2019");//data seg, current selected country, date
+        //change to:   time_alert(data,"whole world","Sun Mar 10 2019","","",""); as default
  */
 
  var xScale = d3.scaleLinear();
