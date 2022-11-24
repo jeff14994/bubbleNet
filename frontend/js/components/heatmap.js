@@ -18,7 +18,10 @@ const heatmap = (data, country, num)  => {
     // console.log(data)
     let preProcessData = heatmapDataPreProcess(data, country, num)
     // console.log("Loading sub bar chart")
-    barChart(data, country, num)
+    d3.select('.tooltip_heatmap').remove();
+    if (d3.select('#heatmap_barchart svg').nodes().length == 0) {
+        barChart(data, country, num);
+    }
     const xData = preProcessData[0]
     const yData = preProcessData[1]
     data = preProcessData[2]

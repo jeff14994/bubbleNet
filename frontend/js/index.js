@@ -28,6 +28,7 @@ const proxyHandler = {
         if (prop === 'country') {
             updateBulletCountry(target);
             timeAlert(data, target['country'], target['date'], '', '', '');
+            heatmap(heatmapData, target['country'], 50000);
             if (target['country'] !== '') {
                 updateHeatmapBarChart(heatmapData, target['country']);
             } else {
