@@ -133,7 +133,10 @@ const bubble = (data, svg, projection, selectedDate) => {
             .attr('stroke', '#000000')
             .attr('fill', d => color(deviationLevel(Math.pow(parseFloat(d.numberOfAlerts)-mean,2))))
             .on('mouseover', (d,i) => {
-                globalProxy.country = i.sourceCountry;
+                let hasSelected = d3.selectAll('.bubble').nodes().map(v => d3.select(v).classed('selected')).filter(v => v&&v);
+                if (hasSelected.length === 0) {
+                    globalProxy.country = i.sourceCountry;
+                }
                 div.transition()
                     .duration(500)
                     .style('opacity', 1);
@@ -156,7 +159,10 @@ const bubble = (data, svg, projection, selectedDate) => {
                     .style('left', `${(d.pageX)}px`);
             })
             .on('mouseout', () => {
-                globalProxy.country = '';
+                let hasSelected = d3.selectAll('.bubble').nodes().map(v => d3.select(v).classed('selected')).filter(v => v&&v);
+                if (hasSelected.length === 0) {
+                    globalProxy.country = '';
+                }
                 div.transition()
                     .duration(500)
                     .style('opacity', 0);
