@@ -21,9 +21,10 @@
  */
 const bubble = (data, svg, projection, selectedDate) => {
     // tooltip
+    d3.select('.tooltip-bubble').remove();
     const div = d3.select('body')
         .append('div')
-        .classed('tooltip bottom', true)
+        .attr('class', 'tooltip-bubble')
         .style('opacity', 0);
     
     const color = d3.scaleOrdinal()
@@ -142,7 +143,7 @@ const bubble = (data, svg, projection, selectedDate) => {
                     .attr('width', 120)
                     .attr('height', 80)
                     .style('display', 'block')
-                    .style('margin', '8px')
+                    .style('padding', '8px')
                     .style('align-items', 'center')
                     .style('position', 'absolute')
                     .style('font', '14px arial')
