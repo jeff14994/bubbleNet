@@ -80,7 +80,7 @@ const heatmap = (data, country, num)  => {
     }
     var mousemove = function(e, i) {
         tooltip
-            .html("Number of alerts: " + i.value.toLocaleString('en-US'))
+            .html(`Date: Mar ${i.date} <br> Time: ${i.time}:00 -  ${i.time}:59 <br>${country? country : "Whole world" }: <span style="color:red;">${i.value.toLocaleString('en-US')} alerts</span>`)
             .style("opacity", "1")
             .style("position", "absolute")
             .style("left", (e.pageX + HOVER_PADDING) + "px")
