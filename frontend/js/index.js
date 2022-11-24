@@ -11,6 +11,9 @@ var showTable = false;
 var globalData = {
     country: '',
     date: new Date('2019-03-10 00:00').toDateString('en-US'),
+    time: '',
+    protocol: '',
+    category: '',
 }
 
 // Proxy acts as an Event Handler to update components on change
@@ -22,7 +25,7 @@ const proxyHandler = {
         target[prop] = value;
 
         // ** update the components here **
-        if (prop === "country") {
+        if (prop === 'country') {
             updateBulletCountry(target);
             timeAlert(data, target['country'], target['date'], '', '', '');
             if (target['country'] !== '') {
@@ -30,11 +33,16 @@ const proxyHandler = {
             } else {
                 cleanUpHeatmapBarChart();
             }
-        }
-        else if (prop === "date") {
+        } else if (prop === 'date') {
             updateBulletDate(target);
             bubble(data, svg, projection, target['date'], target['date']);
             timeAlert(data, target['country'], target['date'], '', '', '');
+        } else if (prop === 'time') {
+
+        } else if (prop === 'protocol') {
+            
+        } else if (prop === 'category') {
+
         }
     }
 }
