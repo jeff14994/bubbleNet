@@ -212,7 +212,7 @@ const drawTimer = (country, date, numberOfAlerts, timeSlot) => {
 const drawAlert = (totalAlerts, selectedCountryAlerts) => {
     // remove previous view
     d3.selectAll('.alert-string').remove();
-    d3.select('.tool-tip-time-alert').remove();
+    d3.select('.tooltip-time-alert').remove();
 
     const HOVER_PADDING = 10;
     const BAR_LENGTH = 180;
