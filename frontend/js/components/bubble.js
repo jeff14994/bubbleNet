@@ -139,7 +139,7 @@ const bubble = (data, svg, projection, selectedDate) => {
                     .style('opacity', 1);
                 div.html(`${i.date} <br/>
                         00:00 - 23:59 <br/>
-                        ${getCountryNames.of(i.sourceCountry)}: <span style="color:red;">${i.numberOfAlerts} alerts</span>`)
+                        ${getCountryNames.of(i.sourceCountry)}: <span style="color:red;">${i.numberOfAlerts > 1 ? i.numberOfAlerts.toLocaleString('en-US') + ' alerts': i.numberOfAlerts.toLocaleString('en-US') + ' alert'}</span>`)
                     .attr('width', 120)
                     .attr('height', 80)
                     .style('display', 'block')

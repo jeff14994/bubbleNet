@@ -77,7 +77,7 @@ const heatmap = (data, country, num)  => {
     }
     var mousemove = function(e, i) {
         tooltip
-            .html("Number of alert: " + i.value)
+            .html("Number of alerts: " + i.value.toLocaleString('en-US'))
             .style("opacity", "1")
             .style("position", "absolute")
             .style("left", (e.pageX + HOVER_PADDING) + "px")

@@ -192,7 +192,7 @@ const drawTimer = (country, date, numberOfAlerts, timeSlot) => {
         .attr('fill', 'DimGray')
         .attr('x', 20)
         .attr('y', 80)
-        .text(numberOfAlerts > 1 ? `${numberOfAlerts} alerts`: `${numberOfAlerts} alert`); 
+        .text(numberOfAlerts > 1 ? `${numberOfAlerts.toLocaleString('en-US')} alerts`: `${numberOfAlerts.toLocaleString('en-US')} alert`); 
 
     // the string show the name of country selected
     g.append('text')
@@ -271,7 +271,7 @@ const drawAlert = (totalAlerts, selectedCountryAlerts) => {
                 tooltip.transition()
                     .duration(500)
                     .style('opacity', 1);
-                tooltip.html(totalAlerts > 1 ? `${totalAlerts} alerts` : `${totalAlerts} alert`)
+                tooltip.html(`Number of alerts: ${totalAlerts.toLocaleString('en-US')}`)
                     .attr('width', 120)
                     .attr('height', 80)
                     .style('display', 'block')

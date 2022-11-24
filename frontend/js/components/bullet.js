@@ -209,7 +209,7 @@ const bullet = (data) => {
     }
     var mousemove = function(e, i) {
       tooltip
-            .html("Number of attacks: " + i.Value)
+            .html("Number of alerts: " + i.Value.toLocaleString('en-US'))
             .style("opacity", "1")
             .style("position", "absolute")
             .style("left", (e.pageX + HOVER_PADDING) + "px")
@@ -342,7 +342,7 @@ const updateBulletCountry = (target) => {
       }
       var mousemove = function(e, i) {
         tooltip
-              .html("Number of attacks: " + i.Value)
+              .html("Number of alerts: " + i.Value.toLocaleString('en-US'))
               .style("opacity", "1")
               .style("position", "absolute")
               .style("left", (e.pageX + HOVER_PADDING) + "px")
