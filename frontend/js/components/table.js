@@ -45,7 +45,9 @@ function initTable(data, country, date) {
 			})
 			.enter()
 			.append('td')
-			.text(function (d) { return d.value; });
+			.text(function (d) { 
+				return d.column === 'ConnCount' ? parseInt(d.value).toLocaleString('en-US') : d.value; 
+			});
 
 		return table;
 	}
