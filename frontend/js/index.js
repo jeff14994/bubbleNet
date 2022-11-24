@@ -24,7 +24,7 @@ const proxyHandler = {
         // ** update the components here **
         if (prop === "country") {
             updateBulletCountry(target);
-            time_alert(data, target["country"], target["date"]);
+            timeAlert(data, target['country'], target['date'], '', '', '');
             if (target['country'] !== '') {
                 updateHeatmapBarChart(heatmapData, target['country']);
             } else {
@@ -34,7 +34,7 @@ const proxyHandler = {
         else if (prop === "date") {
             updateBulletDate(target);
             bubble(data, svg, projection, target['date'], target['date']);
-            time_alert(data, target["country"], target["date"]);
+            timeAlert(data, target['country'], target['date'], '', '', '');
         }
     }
 }
@@ -48,9 +48,9 @@ document.addEventListener('DOMContentLoaded', function () {
         heatmapData = values[0];
         showSpinner(false);
         bubble(data, svg, projection, globalData.date);
-        time_alert(data,"whole world","Sun Mar 10 2019");
         heatmap(heatmapData, globalData.country, 50000);
         bullet(data);
+        timeAlert(data, globalData.country, globalData.date, '', '', '');
     });
 });
 
