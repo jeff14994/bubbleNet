@@ -264,42 +264,7 @@ const drawAlert = (totalAlerts, selectedCountryAlerts) => {
             .attr('height', 30)
             .attr('fill', 'Gainsboro')
             .attr('stroke','Gainsboro')
-            .attr('stroke-width', '1px')
-            .on('mouseover', d => {
-                d3.select('.default-alert-bar')
-                    .attr('stroke', 'DimGray')
-                tooltip.transition()
-                    .duration(500)
-                    .style('opacity', 1);
-                tooltip.html(`Number of alerts: ${totalAlerts.toLocaleString('en-US')}`)
-                    .attr('width', 120)
-                    .attr('height', 80)
-                    .style('display', 'block')
-                    .style('padding', '8px')
-                    .style('align-items', 'center')
-                    .style('position', 'absolute')
-                    .style('font', '14px arial')
-                    .style('color', '#FFFFFF')
-                    .style('background','#000000')
-                    .style('opacity', '0.8')
-                    .style('border-radius', '8px')
-                    .style('pointer-events', 'none')
-                    .style('top', `${(d.pageY + HOVER_PADDING)}px`)
-                    .style('left', `${(d.pageX + HOVER_PADDING)}px`);
-            })
-            .on('mouseout', () => {
-                d3.select('.default-alert-bar')
-                    .attr('stroke', 'none');
-                tooltip.transition()
-                    .duration(500)
-                    .style('opacity', 0);
-            })
-            // TODO: add click event
-            .on('click', () => {
-                d3.select('.default-alert-bar')
-                    .attr('stroke-width', '3px')
-                    .attr('stroke', 'DimGray');
-            });
+            .attr('stroke-width', '1px');
     }
 
     const tooltip = d3.select('body').append('div')
@@ -334,4 +299,42 @@ const drawAlert = (totalAlerts, selectedCountryAlerts) => {
             .attr('width', 0)
             .remove();
     }
+    
+    // hover effect
+    d3.select('.default-alert-bar')
+        .on('mouseover', d => {
+            d3.select('.default-alert-bar')
+                .attr('stroke', 'DimGray')
+            tooltip.transition()
+                .duration(500)
+                .style('opacity', 1);
+            tooltip.html(`Number of alerts: ${totalAlerts.toLocaleString('en-US')}`)
+                .attr('width', 120)
+                .attr('height', 80)
+                .style('display', 'block')
+                .style('padding', '8px')
+                .style('align-items', 'center')
+                .style('position', 'absolute')
+                .style('font', '14px arial')
+                .style('color', '#FFFFFF')
+                .style('background','#000000')
+                .style('opacity', '0.8')
+                .style('border-radius', '8px')
+                .style('pointer-events', 'none')
+                .style('top', `${(d.pageY + HOVER_PADDING)}px`)
+                .style('left', `${(d.pageX + HOVER_PADDING)}px`);
+        })
+        .on('mouseout', () => {
+            d3.select('.default-alert-bar')
+                .attr('stroke', 'none');
+            tooltip.transition()
+                .duration(500)
+                .style('opacity', 0);
+        })
+        // TODO: add click event
+        .on('click', () => {
+            d3.select('.default-alert-bar')
+                .attr('stroke-width', '3px')
+                .attr('stroke', 'DimGray');
+        });
 }
