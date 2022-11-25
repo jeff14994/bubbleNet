@@ -19,7 +19,7 @@
  * @param {string} projection projection function from d3
  * @param {string} selectedDate format '2019-03-10 00:00'  
  */
-const bubble = (data, svg, projection, selectedDate) => {
+const bubble = (data, svg, projection, selectedDate, time) => {
     // tooltip
     d3.select('.tooltip-bubble').remove();
     const div = d3.select('body')
@@ -101,7 +101,12 @@ const bubble = (data, svg, projection, selectedDate) => {
         .style('font-size', '9px');
 
 
-    const formattedData = dateRangeFilter(data, selectedDate);
+    var formattedData = dateRangeFilter(data, selectedDate);
+    if (time) {
+        formattedData = timeRangeFilter(formattedData, time);
+    } else {
+        formattedData = dateRangeFilter(data, selectedDate);
+    }
     const width = +svg.style('width').replace('px','');
     const height = +svg.style('height').replace('px','');
 
@@ -234,6 +239,7 @@ const bubble = (data, svg, projection, selectedDate) => {
  */
 const dateRangeFilter = (data, selectedDate) => {
     const formattedData = [];
+    const formattedData1 = [];
     Object.keys(data).map(country => {
         let countryRecord = {};
         let targetList = [];
@@ -250,7 +256,19 @@ const dateRangeFilter = (data, selectedDate) => {
         countryRecord['date'] = selectedDate;
         countryRecord['numberOfAlerts'] = data[country].date[selectedDate].numberOfAlerts;
         countryRecord['target'] = targetList;
+        countryRecord['time'] = data[country].date[selectedDate].time
         formattedData.push(countryRecord);
     });
     return formattedData;
+}
+const updateBubbleByTime = (data, svg, projection, selectedDate, time) => { 
+    bubble(data, svg, projection, selectedDate, time);
+}
+const timeRangeFilter = (data, time) => {
+    const timeInt = parseInt(time, 10)
+        data.forEach(d => {
+            // console.log(d.numberOfAlerts)
+            d.numberOfAlerts = d.time[timeInt].numberOfAlerts;
+        })
+    return data
 }

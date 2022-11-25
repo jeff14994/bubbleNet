@@ -69,7 +69,7 @@ const heatmap = (data, country, num)  => {
             .call(d3.axisLeft(y).tickSize(0).tickFormat(d => d + ":00"))
             .select(".domain").remove()
     // mouseover event handler function
-    var mouseover = function(d) {
+    var mouseover = function(d, i) {
         tooltip
             .transition()
             .duration(500)
@@ -77,6 +77,8 @@ const heatmap = (data, country, num)  => {
         d3.select(this)
             .style("stroke", "black")
             .style("opacity", 1)
+        globalProxy.time = i.time
+        // globalProxy.protocol = "";
     }
     var mousemove = function(e, i) {
         tooltip
@@ -104,6 +106,7 @@ const heatmap = (data, country, num)  => {
         d3.select(this)
             .style("stroke", "none")
             .style("opacity", 0.7)
+        globalProxy.time = "";
     }
     // show the squares when hovering
     svg.selectAll()

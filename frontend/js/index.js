@@ -23,7 +23,6 @@ const proxyHandler = {
             return;
         }
         target[prop] = value;
-        console.log(target)
 
         // ** update the components here **
         if (prop === 'country') {
@@ -37,10 +36,10 @@ const proxyHandler = {
             }
         } else if (prop === 'date') {
             updateBulletDate(target);
-            bubble(data, svg, projection, target['date'], target['date']);
+            bubble(data, svg, projection, target['date']);
             timeAlert(data, target['country'], target['date'], '', '', '');
         } else if (prop === 'time') {
-
+            updateBubbleByTime(data, svg, projection, target['date'], target['time'])
         } else if (prop === 'protocol') {
             
         } else if (prop === 'category') {

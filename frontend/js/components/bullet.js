@@ -51,7 +51,6 @@ const yClean2 = (x) => {
 const bullet = (data) => {
     const HOVER_PADDING = 10;
 
-    console.log(data)
     // preprocessing
     /**
      * Fix missing protocol type. (by Yu-Hsien Tu)
