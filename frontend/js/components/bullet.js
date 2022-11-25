@@ -234,6 +234,8 @@ const bullet = (data) => {
         d3.select(this)
             .style("stroke", "none")
             .style("opacity", 0.7)
+        globalProxy.protocol = "";
+        globalProxy.category = "";
     }
 
     svg1.selectAll("mybar")
@@ -367,6 +369,8 @@ const updateBulletCountry = (target) => {
           d3.select(this)
               .style("stroke", "none")
               .style("opacity", 0.7)
+        globalProxy.protocol = "";
+        globalProxy.category = "";
       }
 
       svg.selectAll("mybullet")
