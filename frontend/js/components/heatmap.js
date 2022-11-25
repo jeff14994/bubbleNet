@@ -76,10 +76,13 @@ const heatmap = (data, country, num)  => {
             .style("opacity", 1)
         d3.select(this)
             .style("stroke", "black")
-            .style("opacity", 1)
-        globalProxy.date = new Date(`2019-03-${i.date} 00:00`).toDateString('en-US'),
-        globalProxy.time = i.time
-        // globalProxy.protocol = "";
+            .style("opacity", 1);
+        let hasSelected = d3.selectAll('.bubble').nodes().map(v => d3.select(v).classed('selected')).filter(v => v&&v);
+        if (hasSelected.length === 0) {
+            globalProxy.date = new Date(`2019-03-${i.date} 00:00`).toDateString('en-US'),
+            globalProxy.time = i.time
+            // globalProxy.protocol = "";
+        }
     }
     var mousemove = function(e, i) {
         tooltip
@@ -107,8 +110,10 @@ const heatmap = (data, country, num)  => {
         d3.select(this)
             .style("stroke", "none")
             .style("opacity", 0.7)
-        // globalProxy.date = 
-        globalProxy.time = "";
+        let hasSelected = d3.selectAll('.bubble').nodes().map(v => d3.select(v).classed('selected')).filter(v => v&&v);
+        if (hasSelected.length === 0) {
+            globalProxy.time = '';
+        }
     }
     // show the squares when hovering
     svg.selectAll()
