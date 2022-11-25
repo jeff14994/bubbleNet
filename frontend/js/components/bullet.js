@@ -430,7 +430,7 @@ const updateBulletCountry = (target) => {
             .enter()
             .append("rect")
               .attr("class", "bulletLine2")
-              .attr("x", function(d) { return x2(d.Label); })
+              .attr("x", function(d) { return x2(d.Label1); })
               .attr("y", function(d) { return y2(1); })
               .attr("width", x2.bandwidth())
               .attr("height", function(d) { return x2.bandwidth() * 0.02; })

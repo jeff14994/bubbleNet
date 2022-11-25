@@ -41,6 +41,7 @@ const proxyHandler = {
         } else if (prop === 'time') {
             updateBubbleByTime(data, svg, projection, target['date'], target['time'])
             timeAlert(data, target['country'], target['date'], target['time'], '', '');
+            updateBulletCountry(target);
         } else if (prop === 'protocol') {
             
         } else if (prop === 'category') {
