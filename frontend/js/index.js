@@ -10,7 +10,7 @@ var showTable = false;
 // Initialize to default value
 var globalData = {
     country: '',
-    date: new Date('2019-03-10 00:00').toDateString('en-US'),
+    date: new Date('2019-03-11 00:00').toDateString('en-US'),
     time: '',
     protocol: '',
     category: '',
@@ -40,6 +40,8 @@ const proxyHandler = {
             timeAlert(data, target['country'], target['date'], '', '', '');
         } else if (prop === 'time') {
             updateBubbleByTime(data, svg, projection, target['date'], target['time'])
+            timeAlert(data, target['country'], target['date'], target['time'], '', '');
+            updateBulletCountry(target);
         } else if (prop === 'protocol') {
             
         } else if (prop === 'category') {
