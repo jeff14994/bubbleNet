@@ -77,6 +77,7 @@ const heatmap = (data, country, num)  => {
         d3.select(this)
             .style("stroke", "black")
             .style("opacity", 1)
+        globalProxy.date = new Date(`2019-03-${i.date} 00:00`).toDateString('en-US'),
         globalProxy.time = i.time
         // globalProxy.protocol = "";
     }
@@ -106,6 +107,7 @@ const heatmap = (data, country, num)  => {
         d3.select(this)
             .style("stroke", "none")
             .style("opacity", 0.7)
+        // globalProxy.date = 
         globalProxy.time = "";
     }
     // show the squares when hovering

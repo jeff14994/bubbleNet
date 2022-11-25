@@ -10,7 +10,7 @@ var showTable = false;
 // Initialize to default value
 var globalData = {
     country: '',
-    date: new Date('2019-03-11 00:00').toDateString('en-US'),
+    date: new Date('2019-03-10 00:00').toDateString('en-US'),
     time: '',
     protocol: '',
     category: '',
