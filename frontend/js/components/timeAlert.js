@@ -183,7 +183,7 @@ const drawTimer = (country, date, numberOfAlerts, timeSlot) => {
         .attr('fill', 'DimGray')
         .attr('x', 20)
         .attr('y', 40)
-        .text(timeSlot !== '' ? timeSlot : DEFAULT_TIME_SLOT); 
+        .text(timeSlot !== '' ? `${timeSlot}:00 - ${timeSlot}:59` : DEFAULT_TIME_SLOT); 
 
     // the string show the number of alerts
     g.append('text')
