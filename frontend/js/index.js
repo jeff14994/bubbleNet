@@ -23,6 +23,7 @@ const proxyHandler = {
             return;
         }
         target[prop] = value;
+        console.log(target)
 
         // ** update the components here **
         if (prop === 'country') {

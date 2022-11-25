@@ -51,7 +51,7 @@ const yClean2 = (x) => {
 const bullet = (data) => {
     const HOVER_PADDING = 10;
 
-    // console.log(data)
+    console.log(data)
     // preprocessing
     /**
      * Fix missing protocol type. (by Yu-Hsien Tu)
@@ -117,8 +117,8 @@ const bullet = (data) => {
       { Label: "icmp", Value: world_data1["icmp"] },
     ]
     var bar_data2 = [
-      { Label: "Recon.Scanning", Value: world_data2["Recon.Scanning"] },
-      { Label: "Attempt.Login", Value: world_data2["Attempt.Login"] },
+      { Label1: "Recon.Scanning", Value: world_data2["Recon.Scanning"] },
+      { Label1: "Attempt.Login", Value: world_data2["Attempt.Login"] },
     ]
 
 
@@ -160,7 +160,7 @@ const bullet = (data) => {
 
       x2 = d3.scaleBand()
       .range([ 0, width ])
-      .domain(bar_data2.map(function(d) { return d.Label; }))
+      .domain(bar_data2.map(function(d) { return d.Label1; }))
       .padding(0.2);
       y2 = d3.scaleLog()
         .domain([1, max_val2])
@@ -222,6 +222,9 @@ const bullet = (data) => {
             .style('background','#000000')
             .style('opacity', '0.8')
             .style('border-radius', '6px')
+      if (i.Label) {globalProxy.protocol = i.Label; globalProxy.category = ""}
+      if (i.Label1) {globalProxy.category = i.Label1; globalProxy.protocol = ""}
+      
     }
     var mouseleave = function(d) {
       tooltip
@@ -252,7 +255,7 @@ const bullet = (data) => {
               .enter()
               .append("rect")
                 .attr("class", "worldBar2")
-                .attr("x", function(d) { return x2(d.Label); })
+                .attr("x", function(d) { return x2(d.Label1); })
                 .attr("y", function(d) { return yClean2(d.Value); })
                 .attr("width", x2.bandwidth())
                 .attr("height", function(d) { return height - yClean2(d.Value); })
@@ -306,8 +309,8 @@ const updateBulletCountry = (target) => {
       { Label: "icmp", Value: country_data1[country]["icmp"]},
     ];
     var line_data2 = [
-      { Label: "Recon.Scanning", Value: country_data2[country]["Recon.Scanning"]},
-      { Label: "Attempt.Login", Value: country_data2[country]["Attempt.Login"]},
+      { Label1: "Recon.Scanning", Value: country_data2[country]["Recon.Scanning"]},
+      { Label1: "Attempt.Login", Value: country_data2[country]["Attempt.Login"]},
     ];
 
     var bullet_data1;
@@ -323,8 +326,8 @@ const updateBulletCountry = (target) => {
         { Label: "icmp", Value: country_days1[date][country]["icmp"]},
       ];
       bullet_data2 = [
-        { Label: "Recon.Scanning", Value: country_days2[date][country]["Recon.Scanning"]},
-        { Label: "Attempt.Login", Value: country_days2[date][country]["Attempt.Login"]},
+        { Label1: "Recon.Scanning", Value: country_days2[date][country]["Recon.Scanning"]},
+        { Label1: "Attempt.Login", Value: country_days2[date][country]["Attempt.Login"]},
       ];
     }
 
@@ -406,7 +409,7 @@ const updateBulletCountry = (target) => {
           .enter()
           .append("rect")
             .attr("class", "bulletBar2")
-            .attr("x", function(d) { return x2(d.Label) + (0.25 * x2.bandwidth()); })
+            .attr("x", function(d) { return x2(d.Label1) + (0.25 * x2.bandwidth()); })
             .attr("y", function(d) { return y2(1); })
             .attr("width", 0.5 * x2.bandwidth())
             .attr("height", function(d) { return height - yClean2(1); })
@@ -480,8 +483,8 @@ const updateBulletDate = (target) => {
       { Label: "icmp", Value: world_days1[date]["icmp"]},
     ];
     newBarData2 = [
-      { Label: "Recon.Scanning", Value: world_days2[date]["Recon.Scanning"]},
-      { Label: "Attempt.Login", Value: world_days2[date]["Attempt.Login"]},
+      { Label1: "Recon.Scanning", Value: world_days2[date]["Recon.Scanning"]},
+      { Label1: "Attempt.Login", Value: world_days2[date]["Attempt.Login"]},
     ];
 
     if (country) {
@@ -503,8 +506,8 @@ const updateBulletDate = (target) => {
       { Label: "icmp", Value: world_data1["icmp"]},
     ];
     newBarData2 = [
-      { Label: "Recon.Scanning", Value: world_data2["Recon.Scanning"] },
-      { Label: "Attempt.Login", Value: world_data2["Attempt.Login"]},
+      { Label1: "Recon.Scanning", Value: world_data2["Recon.Scanning"] },
+      { Label1: "Attempt.Login", Value: world_data2["Attempt.Login"]},
     ];
 
     if (country) {
