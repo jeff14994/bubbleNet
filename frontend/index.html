@@ -36,7 +36,11 @@
                 flex-direction: column;
             }
             #map {
-                width: 100%;
+                 /**
+                 our map projection has an aspect raito of ~1.65,
+                setting this to be full width of screen causes the top and bottom to be cut off on wide screens
+                */
+                width: 1320px;
                 height: 800px;
             }
             #heatmap {
