@@ -5,9 +5,15 @@ frontend
 |-- data
 |-- js
 | |-- components
-| | |-- put your component here
+| | |-- bubble.js
+| | |-- bullet.js
+| | |-- heatmap.js
+| | |-- table.js
+| | |-- time_alert.js (deprecated)
+| | |-- timeAlert.js
 | |-- utils
-| | |-- put your util here
+| | |-- preProcess.js
+| | |-- country.js
 | |-- index.js: main js for event listener
 |-- index.html
 ```
@@ -18,10 +24,11 @@ Remeber to include your component in index.html like this:<br>
 <!-- import component -->
 <script src="js/components/bubble.js"></script>
 <!-- import util -->
-<script src="js/utils/timeFilter.js"></script>
+<script src="js/utils/preProcess.js"></script>
 ```
 
 Data format (note that `time` is an Array with 24 time slots):<br>
+
 ```
 <ISO 3166-1 alpha-2 country>: {
     "sourceLatitude": "42.5",
