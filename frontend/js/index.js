@@ -53,7 +53,7 @@ const globalProxy = new Proxy(globalData, proxyHandler)
 
 document.addEventListener('DOMContentLoaded', function () {
     showSpinner(true);
-    Promise.all([d3.csv('../data/data.csv')]).then(function (values) {
+    Promise.all([d3.csv('./data/data.csv')]).then(function (values) {
         init();
         data = preProcess(values[0]);
         heatmapData = values[0];
