@@ -77,11 +77,20 @@ const heatmap = (data, country, num)  => {
         d3.select(this)
             .style("stroke", "black")
             .style("opacity", 1);
-        let hasSelected = d3.selectAll('.bubble').nodes().map(v => d3.select(v).classed('selected')).filter(v => v&&v);
-        if (hasSelected.length === 0) {
-            globalProxy.date = new Date(`2019-03-${i.date} 00:00`).toDateString('en-US'),
-            globalProxy.time = i.time
-            // globalProxy.protocol = "";
+        let hasSelectedBubble = d3.selectAll('.bubble').nodes().map(v => d3.select(v).classed('selected')).filter(v => v&&v);
+        if (hasSelectedBubble.length === 0) {
+            let hasSelectedBar = d3.selectAll('.allAlerts').nodes().map(v => d3.select(v).classed('selected') && d3.select(v).attr('id')).filter(v => v&&v)
+            if (hasSelectedBar.length !== 0) {
+                if (hasSelectedBar[0] === i.date) {
+                    globalProxy.date = new Date(`2019-03-${i.date} 00:00`).toDateString('en-US'),
+                    globalProxy.time = i.time
+                    // globalProxy.protocol = "";
+                }
+            } else {
+                globalProxy.date = new Date(`2019-03-${i.date} 00:00`).toDateString('en-US'),
+                globalProxy.time = i.time
+                // globalProxy.protocol = "";
+            }
         }
     }
     var mousemove = function(e, i) {
@@ -172,6 +181,7 @@ const barChart = (data, country) => {
                     .data(barData)
                     .join("rect")
                     .attr("class", "allAlerts")
+                    .attr("id", d => d.key)
                     // -40 is to make the bar chart align with the heatmap
                     .attr("x", d => xScale(d.key) - 40) 
                     .attr("y", d => yScale(d.value))
@@ -183,16 +193,18 @@ const barChart = (data, country) => {
                     .attr('cursor', 'pointer')
                     // Add hover effect on bar (by Yu-Hsien Tu)
                     .on('mouseover', (d, i) => {
-                        let hasSelected = d3.selectAll('.allAlerts').nodes().map(v => d3.select(v).classed('selected')).filter(v => v&&v);
-                        if (hasSelected.length === 0) {
+                        let hasSelectedBar = d3.selectAll('.allAlerts').nodes().map(v => d3.select(v).classed('selected')).filter(v => v&&v);
+                        let hasSelectedBubble = d3.selectAll('.bubble').nodes().map(v => d3.select(v).classed('selected')).filter(v => v&&v);
+                        if (hasSelectedBar.length === 0 && hasSelectedBubble.length === 0) {
                             globalProxy.date = new Date(`2019-03-${i.key} 00:00`).toDateString('en-US');
                             d3.select(d.currentTarget)
                                 .attr('stroke', 'DimGray');
                         }
                     })
                     .on('mouseout', (d) => {
-                        let hasSelected = d3.selectAll('.allAlerts').nodes().map(v => d3.select(v).classed('selected')).filter(v => v&&v);
-                        if (hasSelected.length === 0) {
+                        let hasSelectedBar = d3.selectAll('.allAlerts').nodes().map(v => d3.select(v).classed('selected')).filter(v => v&&v);
+                        let hasSelectedBubble = d3.selectAll('.bubble').nodes().map(v => d3.select(v).classed('selected')).filter(v => v&&v);
+                        if (hasSelectedBar.length === 0 && hasSelectedBubble.length === 0) {
                             d3.select(d.currentTarget)
                                 .attr('stroke', 'none');
                         }

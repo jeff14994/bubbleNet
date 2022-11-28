@@ -104,9 +104,8 @@ const bubble = (data, svg, projection, selectedDate, time) => {
     var formattedData = dateRangeFilter(data, selectedDate);
     if (time) {
         formattedData = timeRangeFilter(formattedData, time);
-    } else {
-        formattedData = dateRangeFilter(data, selectedDate);
-    }
+    } 
+    
     const width = +svg.style('width').replace('px','');
     const height = +svg.style('height').replace('px','');
 
@@ -120,7 +119,6 @@ const bubble = (data, svg, projection, selectedDate, time) => {
     const mean = countOfNumberOfAttacks/ formattedData.length;
 
     const updateData = (formattedData) => {
-        d3.selectAll('.bubble').remove();
         d3.selectAll('.bubble-country').remove();
         d3.selectAll('.target-line').remove();
         const simulation = d3.forceSimulation(formattedData)
@@ -130,14 +128,25 @@ const bubble = (data, svg, projection, selectedDate, time) => {
             .force('collide', d3.forceCollide().radius(d => size(level(d.numberOfAlerts)) + 2).strength(1))
             .force('center', d3.forceCenter(width / 1.8, height / 2.4));    
         
-        const node = svg.selectAll('.bubble').data(formattedData.filter(d => d.numberOfAlerts > 0)).enter().append('circle')
-            .attr('class', 'bubble')
-            .attr('id', d => d.sourceCountry)
-            .attr('r', d => size(level(d.numberOfAlerts)))
-            .attr('stroke-width', '1px')
-            .attr('stroke', '#000000')
-            .attr('fill', d => color(deviationLevel(Math.pow(parseFloat(d.numberOfAlerts)-mean,2))))
-            .on('mouseover', (d,i) => {
+        const node = svg.selectAll('.bubble').data(formattedData.filter(d => d.numberOfAlerts > 0), d => d.sourceCountry)
+            .join(
+                enter => enter.append('circle')
+                                .attr('class', 'bubble')
+                                .attr('id', d => d.sourceCountry)
+                                .attr('r', d => size(level(d.numberOfAlerts)))
+                                .attr('stroke-width', '1px')
+                                .attr('stroke', '#000000')
+                                .attr('fill', d => color(deviationLevel(Math.pow(parseFloat(d.numberOfAlerts)-mean,2)))),
+                update => update.attr('class', 'bubble')
+                                .attr('id', d => d.sourceCountry)
+                                .transition()
+                                .duration(2000)
+                                .attr('r', d => size(level(d.numberOfAlerts)))
+                                .attr('stroke-width', '1px')
+                                .attr('stroke', '#000000')
+                                .attr('fill', d => color(deviationLevel(Math.pow(parseFloat(d.numberOfAlerts)-mean,2)))),
+            );
+        node.on('mouseover', (d,i) => {
                 let hasSelected = d3.selectAll('.bubble').nodes().map(v => d3.select(v).classed('selected')).filter(v => v&&v);
                 if (hasSelected.length === 0) {
                     globalProxy.country = i.sourceCountry;
@@ -173,8 +182,8 @@ const bubble = (data, svg, projection, selectedDate, time) => {
                     .style('opacity', 0);
             })
             .on('click', (d,i) => onClick(d, i));
-        
-        const title = svg.selectAll('.bubble-country').data(formattedData.filter(d => d.numberOfAlerts > 0)).enter().append('text')
+
+        const title = svg.selectAll('.bubble-country').data(formattedData.filter(d => d.numberOfAlerts > 0), d => d.sourceCountry).enter().append('text')
             .attr('class', 'bubble-country')
             .attr('id', d => d.sourceCountry)
             .text(d => d.sourceCountry)
@@ -239,7 +248,6 @@ const bubble = (data, svg, projection, selectedDate, time) => {
  */
 const dateRangeFilter = (data, selectedDate) => {
     const formattedData = [];
-    const formattedData1 = [];
     Object.keys(data).map(country => {
         let countryRecord = {};
         let targetList = [];
@@ -270,5 +278,5 @@ const timeRangeFilter = (data, time) => {
             // console.log(d.numberOfAlerts)
             d.numberOfAlerts = d.time[timeInt].numberOfAlerts;
         })
-    return data
+    return data;
 }
