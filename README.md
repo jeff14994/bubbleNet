@@ -1,18 +1,208 @@
-# Project: BubbleNet: A Cyber Security Dashboard for Visualizing Patterns
+# File management
 
-## Team Members:
+```
+frontend
+|-- data
+|-- js
+| |-- components
+| | |-- bubble.js
+| | |-- bullet.js
+| | |-- heatmap.js
+| | |-- table.js
+| | |-- time_alert.js (deprecated)
+| | |-- timeAlert.js
+| |-- utils
+| | |-- preProcess.js
+| | |-- country.js
+| |-- index.js: main js for event listener
+|-- index.html
+```
 
-Anrui Xiao, axiao3@asu.edu, 1217052876<br>
-Jiahui Gao, jgao76@asu.edu, 1221030200<br>
-Truxten Cook, tcook11@asu.edu, 1215525454<br>
-Yu-Chuan Hung, yhung17@asu.edu, 1219439611<br>
-Yu-Hsien Tu, yuhsien1@asu.edu, 1222290303<br>
-Zain Jakwani, zjakwani@asu.edu, 1219121137<br>
+Remeber to include your component in index.html like this:<br>
 
-## Before running
+```html
+<!-- import component -->
+<script src="js/components/bubble.js"></script>
+<!-- import util -->
+<script src="js/utils/preProcess.js"></script>
+```
 
-1. Download **data.csv** [here](https://drive.google.com/drive/folders/1A7mhwt3q0j-wioahDO9U7WP9yxtWDAWn?usp=sharing) and place it under `frontend/data`.
-2. ```
-   cd frontend
-   python3 -m http.server
-   ```
+Data format (note that `time` is an Array with 24 time slots):<br>
+
+```
+<ISO 3166-1 alpha-2 country>: {
+    "sourceLatitude": "42.5",
+    "sourceLongitude": "1.5167",
+    "date": {
+        "Sun Mar 10 2019": {
+            "numberOfAlerts": 4,
+            "detail": [
+                {
+                    "ID": "f93b855c-debf-4117-8a68-8aea13d7a87a",
+                    "Category": "Recon.Scanning",
+                    "ConnCount": "66",
+                    "ProtocolType": "tcp"
+                },...
+            ],
+            "target": [
+                "49.6167,15.5833"
+            ],
+            "time": [
+                {
+                    "numberOfAlerts": 0,
+                    "detail": [],
+                    "target": []
+                },
+                {
+                    "numberOfAlerts": 0,
+                    "detail": [],
+                    "target": []
+                },
+                {
+                    "numberOfAlerts": 0,
+                    "detail": [],
+                    "target": []
+                },
+                {
+                    "numberOfAlerts": 0,
+                    "detail": [],
+                    "target": []
+                },
+                {
+                    "numberOfAlerts": 0,
+                    "detail": [],
+                    "target": []
+                },
+                {
+                    "numberOfAlerts": 0,
+                    "detail": [],
+                    "target": []
+                },
+                {
+                    "numberOfAlerts": 0,
+                    "detail": [],
+                    "target": []
+                },
+                {
+                    "numberOfAlerts": 0,
+                    "detail": [],
+                    "target": []
+                },
+                {
+                    "numberOfAlerts": 0,
+                    "detail": [],
+                    "target": []
+                },
+                {
+                    "numberOfAlerts": 0,
+                    "detail": [],
+                    "target": []
+                },
+                {
+                    "numberOfAlerts": 0,
+                    "detail": [],
+                    "target": []
+                },
+                {
+                    "numberOfAlerts": 0,
+                    "detail": [],
+                    "target": []
+                },
+                {
+                    "numberOfAlerts": 0,
+                    "detail": [],
+                    "target": []
+                },
+                {
+                    "numberOfAlerts": 0,
+                    "detail": [],
+                    "target": []
+                },
+                {
+                    "numberOfAlerts": 0,
+                    "detail": [],
+                    "target": []
+                },
+                {
+                    "numberOfAlerts": 0,
+                    "detail": [],
+                    "target": []
+                },
+                {
+                    "numberOfAlerts": 0,
+                    "detail": [],
+                    "target": []
+                },
+                {
+                    "numberOfAlerts": 0,
+                    "detail": [],
+                    "target": []
+                },
+                {
+                    "numberOfAlerts": 1,
+                    "detail": [
+                        {
+                            "ID": "920fc4c5-2a27-4a2f-8fcc-338de86bd17b",
+                            "Category": "Recon.Scanning",
+                            "ConnCount": "2",
+                            "ProtocolType": "tcp"
+                        }
+                    ],
+                    "target": [
+                        "49.6167,15.5833"
+                    ]
+                },
+                {
+                    "numberOfAlerts": 2,
+                    "detail": [
+                        {
+                            "ID": "f93b855c-debf-4117-8a68-8aea13d7a87a",
+                            "Category": "Recon.Scanning",
+                            "ConnCount": "66",
+                            "ProtocolType": "tcp"
+                        },
+                        {
+                            "ID": "0625f1d8-6743-44d3-a983-fa3c0400c206",
+                            "Category": "Recon.Scanning",
+                            "ConnCount": "65",
+                            "ProtocolType": "tcp"
+                        }
+                    ],
+                    "target": [
+                        "49.6167,15.5833"
+                    ]
+                },
+                {
+                    "numberOfAlerts": 0,
+                    "detail": [],
+                    "target": []
+                },
+                {
+                    "numberOfAlerts": 0,
+                    "detail": [],
+                    "target": []
+                },
+                {
+                    "numberOfAlerts": 1,
+                    "detail": [
+                        {
+                            "ID": "1941b3d0-5d53-40a3-96e2-93cb7ce9f9df",
+                            "Category": "Recon.Scanning",
+                            "ConnCount": "50",
+                            "ProtocolType": "tcp"
+                        }
+                    ],
+                    "target": [
+                        "49.6167,15.5833"
+                    ]
+                },
+                {
+                    "numberOfAlerts": 0,
+                    "detail": [],
+                    "target": []
+                }
+            ]
+        }, ...
+    }
+}
+```
