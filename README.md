@@ -1,7 +1,10 @@
 # Project: BubbleNet: A Cyber Security Dashboard for Visualizing Patterns
+Detect and defend against DDoS/DoS attacks in real-time. Automate network packet analysis to easily spot anomalies, without the technical hassle.
+
+## Demo
 ![Demo](./video.gif)
 
-## Website
+## Try it out!
 [BubbleNet Dashboard to visualize attack patterns](https://jeff14994.github.io/bubbleNet/)
 
 ## Why doing this project? 
