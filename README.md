@@ -1,4 +1,5 @@
 # Project: BubbleNet: A Cyber Security Dashboard for Visualizing Patterns
+![Demo](./video.gif)
 
 ## Website
 [BubbleNet Dashboard to visualize attack patterns](https://jeff14994.github.io/bubbleNet/)
